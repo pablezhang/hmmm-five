@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
-export const getQuestionListAPI = (params) => {
+export const getQuestionListAPI = () => {
   return request({
-    url: '/questions/randoms/'
+    url: '/questions/randoms'
   })
 }
