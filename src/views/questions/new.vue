@@ -40,18 +40,14 @@
             <quillEditor v-model="questionData.stem" :options="editorOption" style="width:800px;height:200px" />
           </el-form-item>
           <el-form-item label="选项">
-            <el-radio-group>
-              <el-radio :label="1">A:</el-radio>
-              <el-input />
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-              >
-                <i class="el-icon-plus" />
-              </el-upload>
-            </el-radio-group>
+            <el-radio :label="1">A:</el-radio>
+            <el-input />
+            <el-upload
+              action=""
+              list-type="picture-card"
+            >
+              <i class="el-icon-plus" />
+            </el-upload>
           </el-form-item>
           <el-form-item>
             <el-form-item>
@@ -105,8 +101,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-form-item{
-  display: flex;
-}
 
 </style>
