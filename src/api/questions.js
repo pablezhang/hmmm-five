@@ -6,3 +6,23 @@ export const gerQuestionsAPI = (data) => {
     data
   })
 }
+
+export const deleteQuestionsAPI = (id) => {
+  return request({
+    method: 'delete',
+    url: `/questions/${id}`
+  })
+}
+
+export const gerQuestionsViewAPI = (id) => {
+  return request({
+    url: `/questions/${id}`
+  })
+}
+
+export const getSubjectsAPI = (data) => {
+  return request({
+    url: ' /subjects/simple',
+    data
+  })
+}
