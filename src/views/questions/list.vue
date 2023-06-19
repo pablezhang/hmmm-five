@@ -92,13 +92,40 @@
         <el-table-column label="录入人" width="100px" />
         <el-table-column label="操作" />
       </el-table>
+      <el-pagination
+        style="margin-top: 20px; text-align: right;"
+        background
+        :page-sizes="[5, 10, 20, 50]"
+        layout="prev, pager, next,sizes,jumper"
+        :total="1"
+      />
     </el-card>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      questionSearchData: {
+        page: 1, // 当前页数
+        pagesize: 10, // 页尺寸
+        subjectID: '', // 学科
+        difficulty: '', // 难度
+        questionType: '', // 试题类型
+        tags: '', // 标签名称
+        province: '', // 企业所在地省份
+        city: '', // 企业所在城市
+        keyword: '', // 关键字
+        remarks: '', // 题目备注
+        shortName: '', // 企业简称
+        direction: '', // 方向
+        creatorID: '', // 录入人
+        catalogID: ''// 目录
 
+      }
+    }
+  }
 }
 </script>
 
