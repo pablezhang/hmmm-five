@@ -12,6 +12,11 @@ import subjectsRouter from './modules/subjects'
 export const constantRoutes = [
 
   {
+    path: '/login',
+    component: () => import('@/views/login'),
+    hidden: true
+  },
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
