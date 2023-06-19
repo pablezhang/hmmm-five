@@ -2,22 +2,10 @@
   <div>
     <el-card class="card">
       <el-row>
-        <el-col
-          class="search"
-          :span="6"
-        >关键字 <el-input
-          v-model="title"
-          placeholder="根据文章标题搜索"
-        /></el-col>
-        <el-col
-          class="search"
-          :span="6"
-        >状态
-          <el-select
-            v-model="select"
-            style="margin-left: 10px"
-            placeholder="请选择"
-          >
+        <el-col class="search" :span="6">关键字
+          <el-input v-model="title" placeholder="根据文章标题搜索" /></el-col>
+        <el-col class="search" :span="6">状态
+          <el-select v-model="select" style="margin-left: 10px" placeholder="请选择">
             <el-option label="启用" value="1" />
             <el-option label="禁用" value="0" />
           </el-select>
@@ -32,18 +20,27 @@
         </el-col>
       </el-row>
       <el-row style="margin: 10px 0">
-        <el-alert title="数据一共有几条" type="info" show-icon />
+        <el-alert :title="'数据一共有' + pageParams.total + '条'" type="info" show-icon />
       </el-row>
-      <el-table>
-        <el-table-column label="序号" :data="tableList">
+      <el-table :data="tableList">
+        <el-table-column align="center" label="序号" width="80px">
           <template #default="{ $index }"> {{ $index + 1 }} </template>
         </el-table-column>
-        <el-table-column prop="string" label="文章标题" />
-        <el-table-column prop="string" label="阅读数" />
-        <el-table-column prop="string" label="录入人" />
-        <el-table-column prop="string" label="录入时间" />
-        <el-table-column prop="string" label="状态" />
-        <el-table-column prop="string" label="操作">
+        <el-table-column prop="title" label="文章标题" width="400px">
+          <template #default="{ row }">
+            <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-video-camera-solid" /> </span>
+            <span v-else>{{ row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="visits" label="阅读数" width="80px" />
+        <el-table-column prop="username" label="录入人" width="100px" />
+        <el-table-column prop="createTime" label="录入时间" />
+        <el-table-column prop="state" label="状态" width="100px">
+          <template #default="{ row }">
+            {{ row.state ===1?'已启用':'已禁用' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
           <el-button type="text">预览</el-button>
           <el-button type="text">启用</el-button>
           <el-button type="text">修改</el-button>
@@ -53,9 +50,11 @@
       <el-row type="flex" justify="end">
         <el-pagination
           background
-          :page-size="10"
+          :page-sizes="[10, 20, 40, 50]"
+          :page-size="pageParams.pagesize"
           layout="prev, pager, next, jumper"
-          :total="100"
+          :total="pageParams.total"
+          @current-change="onChange"
         />
       </el-row>
     </el-card>
@@ -80,12 +79,23 @@
     </el-dialog>
   </div>
 </template>
-
+{
+    "id": 637,
+    "title": "阴丽华",
+    "articleBody": "<p>娶妻当娶阴丽华-----汉光武帝</p>",
+    "videoURL": null,
+    "visits": 0,
+    "state": 1,
+    "creatorID": 4,
+    "createTime": "2023-06-19T11:47:24.000Z",
+    "username": "demo"
+}
 <script>
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
+import { getArticlesAPI } from '@/api/articles'
 export default {
   components: {
     quillEditor
@@ -95,7 +105,12 @@ export default {
       visible: false,
       select: '',
       title: '',
-      tableList: [{ string: '11' }],
+      tableList: [],
+      pageParams: {
+        page: 1,
+        pagesize: 10,
+        total: 100
+      },
       editorOption: {
         modules: {
           toolbar: [
@@ -106,6 +121,20 @@ export default {
         }
       }
     }
+  },
+  created() {
+    this.getArticles()
+  },
+  methods: {
+    async  getArticles() {
+      const res = await getArticlesAPI(this.pageParams)
+      this.tableList = res.items
+      this.pageParams.total = res.counts
+    },
+    onChange(page) {
+      this.pageParams.page = page
+      this.getArticles(this.pageParams)
+    }
   }
 }
 </script>
@@ -113,7 +142,6 @@ export default {
 <style lang='scss' scoped>
 .card {
   margin: 20px;
-  height: 800px;
   .search {
     display: flex;
     justify-content: center;
