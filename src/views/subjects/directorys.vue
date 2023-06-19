@@ -37,7 +37,7 @@
             <el-row>
               <el-button type="text" @click="updateStatus(row)">{{ row.state===1?'禁用':'启用' }}</el-button>
               <el-button type="text" :disabled="row.state===0" @click="editData(row.id)">修改</el-button>
-              <el-button type="text" :disabled="row.state===0">删除</el-button>
+              <el-button type="text" :disabled="row.state===0" @click="delData(row.id)">删除</el-button>
             </el-row>
           </template>
         </el-table-column>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { getCatalogDetailAPI, getCatalogListAPI, updateStatusAPI } from '@/api/directorys'
+import { delCatalogAPI, getCatalogDetailAPI, getCatalogListAPI, updateStatusAPI } from '@/api/directorys'
 import DireDialog from './components/DireDialog.vue'
 export default {
   components: { DireDialog },
@@ -124,7 +124,17 @@ export default {
       this.$message.success('状态已更换')
       this.renderTable(this.reqParameter)
     },
-    
+    // 删除目录
+    async delData(id) {
+      await this.$confirm('即将永久删除该目录,是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      await delCatalogAPI(id)
+      this.$message.success('已删除该目录')
+      this.renderTable(this.reqParameter)
+    }
   }
 }
 
