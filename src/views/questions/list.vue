@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { gerQuestionsAPI } from '@/api/questions'
 export default {
   data() {
     return {
@@ -122,8 +123,16 @@ export default {
         direction: '', // 方向
         creatorID: '', // 录入人
         catalogID: ''// 目录
-
       }
+    }
+  },
+  created() {
+    this.getQuestions()
+  },
+  methods: {
+    async getQuestions() {
+      const res = await gerQuestionsAPI(this.questionSearchData)
+      console.log(res)
     }
   }
 }
