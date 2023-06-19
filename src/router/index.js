@@ -5,6 +5,9 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import questionsRouter from './modules/questions'
+import articlesRouter from './modules/articles'
+import subjectsRouter from './modules/subjects'
 
 export const constantRoutes = [
   {
@@ -27,9 +30,12 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '数据概览', icon: 'dashboard' }
     }]
   },
+  questionsRouter,
+  subjectsRouter,
+  articlesRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
