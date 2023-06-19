@@ -55,7 +55,7 @@ export default {
     setSha() {
       const sha256 = require('js-sha256').sha256// 这里用的是require方法，所以没用import
       this.formData.password = sha256(this.formData.password)// 要加密的密码
-      console.log(this.formData.password)// 这就是你加密之后的密码
+      // console.log(this.formData.password)// 这就是你加密之后的密码
     }
   }
 }
