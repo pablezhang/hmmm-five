@@ -14,6 +14,7 @@ router.beforeEach(async(to, from, next) => {
 
   next()
   // determine whether the user has logged in
+  next()
 })
 
 router.afterEach(() => {
