@@ -39,3 +39,11 @@ export const updateCatalogDetailAPI = (data) => {
     data
   })
 }
+
+// 状态更改
+export const updateStatusAPI = (id, state) => {
+  return request({
+    url: `/directorys/${id}/${state}`,
+    method: 'post'
+  })
+}

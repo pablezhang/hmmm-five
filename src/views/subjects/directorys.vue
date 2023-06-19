@@ -35,7 +35,7 @@
         <el-table-column label="操作" align="center">
           <template #default="{row}">
             <el-row>
-              <el-button type="text">{{ row.state===1?'禁用':'启用' }}</el-button>
+              <el-button type="text" @click="updateStatus(row)">{{ row.state===1?'禁用':'启用' }}</el-button>
               <el-button type="text" :disabled="row.state===0" @click="editData(row.id)">修改</el-button>
               <el-button type="text" :disabled="row.state===0">删除</el-button>
             </el-row>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { getCatalogDetailAPI, getCatalogListAPI } from '@/api/directorys'
+import { getCatalogDetailAPI, getCatalogListAPI, updateStatusAPI } from '@/api/directorys'
 import DireDialog from './components/DireDialog.vue'
 export default {
   components: { DireDialog },
@@ -117,7 +117,14 @@ export default {
       const res = await getCatalogDetailAPI(id)
       this.$refs.dialog.formData = res
       this.visible = true
-    }
+    },
+    // 更新状态
+    async updateStatus(row) {
+      await updateStatusAPI(row.id, row.state === 1 ? 0 : 1)
+      this.$message.success('状态已更换')
+      this.renderTable(this.reqParameter)
+    },
+    
   }
 }
 
