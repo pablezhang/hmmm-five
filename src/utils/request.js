@@ -9,7 +9,7 @@ const request = axios.create({
 request.interceptors.request.use(function(config) {
   const token = getToken()
   if (token) {
-    config.headers.Authorization = token
+    config.headers.Authorization = token.token
   }
   return config
 }, function(error) {

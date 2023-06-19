@@ -101,10 +101,39 @@
           </el-row>
         </el-form>
         <el-tabs type="border-card">
-          <el-tab-pane label="用户管理">用户管理</el-tab-pane>
-          <el-tab-pane label="配置管理">配置管理</el-tab-pane>
-          <el-tab-pane label="角色管理">角色管理</el-tab-pane>
-          <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+          <el-tab-pane v-for="item in changeList" :key="item" :label="item">
+            <div class="light">
+              <i class="el-icon-info" />
+              <span style="margin-left:8px">数据一共?条</span>
+            </div>
+            <el-table style="margin-top:20px">
+              <el-table-column label="试题编号" />
+              <el-table-column label="学科" />
+              <el-table-column label="目录" />
+              <el-table-column label="题型" />
+              <el-table-column label="题干" />
+              <el-table-column label="录入时间" />
+              <el-table-column label="难度" />
+              <el-table-column label="录入人" />
+              <el-table-column label="审核状态" />
+              <el-table-column label="审核意见" />
+              <el-table-column label="审核人" />
+              <el-table-column label="发布状态" />
+              <el-table-column label="操作" />
+            </el-table>
+            <el-row type="flex" justify="center">
+              <el-pagination
+                background
+                :current-page="currentPage4"
+                :page-sizes="[100, 200, 300, 400]"
+                :page-size="100"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="400"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              />
+            </el-row>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>
@@ -112,10 +141,21 @@
 </template>
 
 <script>
+import { getQuestionsChoiceAPI } from '@/api/choice'
 export default {
   data() {
     return {
-      key: ''
+      key: '',
+      changeList: ['全部', '待审核', '已审核', '已拒绝']
+    }
+  },
+  created() {
+    this.getQuestionsChoice()
+  },
+  methods: {
+    async getQuestionsChoice() {
+      const res = await getQuestionsChoiceAPI()
+      console.log(res)
     }
   }
 }
@@ -130,5 +170,16 @@ export default {
   }
  .widthBtn {
     width: 240px !important
+}
+.light{
+  height: 40px;
+  color: #909399;
+  line-height: 40px;
+  font-size: 13px;
+  background-color: #f4f4f5;
+  padding-left: 20px;
+}
+.el-icon-info{
+  font-size: 16px;
 }
 </style>
