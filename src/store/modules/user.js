@@ -16,8 +16,8 @@ const mutations = {
 const actions = {
   async loginActions({ commit }, payload) {
     const res = await postUserLoginAPI(payload)
-    commit('saveToken', res)
-    setToken(res)
+    commit('saveToken', res.token)
+    setToken(res.token)
     Message.success('登录成功')
     router.push('/')
   }
