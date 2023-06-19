@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getToken } from './auth'
+import { Message } from 'element-ui'
 
 const request = axios.create({
   timeout: 5000
@@ -9,7 +10,7 @@ const request = axios.create({
 request.interceptors.request.use(function(config) {
   const token = getToken()
   if (token) {
-    config.headers.Authorization = token
+    config.headers.Authorization = token.token
   }
   return config
 }, function(error) {
@@ -18,9 +19,17 @@ request.interceptors.request.use(function(config) {
 
 // 添加响应拦截器
 request.interceptors.response.use(function(response) {
-  return response.data
+  if (response.status === 200) {
+    return response.data
+  }
 }, function(error) {
-  return Promise.reject(error)
+  if (error.response.status !== 401) {
+    Message.error(error.response.data.message)
+    return Promise.reject(new Error(error))
+  } else {
+    Message.error('登录超时,请重新登录')
+    return Promise.reject(new Error(error))
+  }
 })
 
 export default request
