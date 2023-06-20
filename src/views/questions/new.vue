@@ -60,7 +60,7 @@
           </el-form-item>
           <el-form-item v-show="questionData.questionType!=='3'" label="选项:" prop="options">
             <div v-for="(item, index) in questionDataList" :key="index" class="option">
-              <el-radio v-show="questionData.questionType ==='1'" v-model="item.isRight" :label="true" @click.native="radioChange(item.num)">{{ item.code }}</el-radio>
+              <el-radio v-show="questionData.questionType ==='1'" v-model="item.isRight" :label="1" @click.native="radioChange(item.num)">{{ item.code }}</el-radio>
               <el-checkbox v-show="questionData.questionType!=='1'" v-model="item.isRight" style="margin-right:15px">{{ item.code }}</el-checkbox>
               <el-input v-model="item.title" style="width:240px" />
               <el-upload
@@ -107,7 +107,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
-import { addOptionAPI, getCompanyListAPI, getSimpleSubjectListAPI } from '@/api/question-new'
+import { addOptionAPI, detailQuestionsAPI, editQuestionAPI, getCompanyListAPI, getSimpleSubjectListAPI } from '@/api/question-new'
 import { getCatalogListAPI } from '@/api/directorys'
 import { getTagsListAPI } from '@/api/tags'
 import { getCityAPI, getProvinceAPI } from '@/api/questions'
@@ -152,10 +152,10 @@ export default {
       alphabet: ['E:', 'F:', 'G:', 'H:', 'I:', 'J:', 'K:', 'L:', 'M:', 'N:', 'O:', 'P:', 'Q:', 'R:', 'S:', 'T:', 'U:', 'V:', 'W:', 'X:', 'Y:', 'Z:'],
 
       questionDataList: [
-        { code: 'A:', title: '', img: null, num: 0, isRight: false },
-        { code: 'B:', title: '', img: null, num: 1, isRight: false },
-        { code: 'C:', title: '', img: null, num: 2, isRight: false },
-        { code: 'D:', title: '', img: null, num: 3, isRight: false }
+        { code: 'A:', title: '', img: null, num: 0, isRight: 0 },
+        { code: 'B:', title: '', img: null, num: 1, isRight: 0 },
+        { code: 'C:', title: '', img: null, num: 2, isRight: 0 },
+        { code: 'D:', title: '', img: null, num: 3, isRight: 0 }
       ],
       editorOption: {
         modules: {
@@ -203,8 +203,12 @@ export default {
     }
   },
 
-  created() {
+  async created() {
     this.loadData()
+    if (this.$route.params.id) {
+      const res = await detailQuestionsAPI({ id: this.$route.params.id, isNext: true })
+      this.questionData = res
+    }
   },
 
   methods: {
@@ -241,6 +245,7 @@ export default {
     onPic(code) {
       this.currentPic = code
     },
+    // 新增
     async onSubmit() {
       await this.$refs.questionData.validate()
       this.questionData.options = [...this.questionDataList]
@@ -248,10 +253,11 @@ export default {
         delete item.num
         return item
       })
-      await addOptionAPI(this.questionData)
-      Message.success('添加成功')
+      this.$route.params.id ? await editQuestionAPI(this.questionData) : await addOptionAPI(this.questionData)
+      this.$route.params.id ? Message.success('试题修改成功') : Message.success('试题添加成功')
       this.$router.push('/questions/list')
     },
+    // COS上传
     beforeAvatarUpload(file) {
       const isJPG = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'].includes(file.type)
       const isLt2M = file.size / 1024 / 1024 < 2
