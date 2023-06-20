@@ -39,6 +39,9 @@ module.exports = {
     proxy: {
       '/': {
         target: 'http://hmmm-api.itheima.net'
+      },
+      '/mock': {
+        target: 'http://xxx-xxx.net'
       }
     }
   },
