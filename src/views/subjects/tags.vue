@@ -136,7 +136,7 @@ export default {
         type: 'warning'
       }).then(async() => {
         await delTagsAPI(id)
-        this.$message.success('已删除该目录')
+        this.$message.success('已删除该标签')
         this.renderTable()
       }).catch(() => {
         this.$message.info('已取消删除')

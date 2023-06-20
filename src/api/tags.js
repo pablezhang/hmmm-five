@@ -5,5 +5,5 @@ export const getTagsListAPI = (params) => {
 }
 
 export const delTagsAPI = (id) => {
-  return request({ url: `/tags/:${id}`, method: 'delete' })
+  return request({ url: `/tags/${id}`, method: 'delete' })
 }
