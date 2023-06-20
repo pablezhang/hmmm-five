@@ -194,8 +194,8 @@
               <el-table-column prop="chkState" label="审核状态">
                 <template #default="{ row }">
                   <span v-if="row.chkState === 0">待审核</span>
-                  <span v-else-if="row.chkState === 1">通过</span>
-                  <span v-else>拒绝</span>
+                  <span v-else-if="row.chkState === 1">已审核</span>
+                  <span v-else>已拒绝</span>
                 </template>
               </el-table-column>
               <el-table-column prop="chkRemarks" label="审核意见" />
@@ -228,11 +228,13 @@
                   <el-button
                     type="text"
                     style="font-size: 12px"
+                    :disabled="row.publishState === 0"
                     @click="onPublishState(row.id)"
                   >下架</el-button>
                   <el-button
                     type="text"
                     style="font-size: 12px"
+                    @click="getDelete(row.id)"
                   >删除</el-button>
                 </template>
               </el-table-column>
@@ -261,7 +263,7 @@
           }}</span>
         </el-col>
         <el-col :span="6">
-          <span>【题号】：{{ oneDiaList.options?.questionsID }}</span>
+          <span>【题号】：{{ oneDiaList.id }}</span>
         </el-col>
         <el-col :span="6">
           <span v-if="oneDiaList.difficulty === '1'">【难度】：简单</span>
@@ -269,7 +271,7 @@
           <span v-else>【难度】：困难</span>
         </el-col>
         <el-col :span="6">
-          <span>【标签】：</span>
+          <span>【标签】：{{ oneDiaList.tags }}</span>
         </el-col>
       </el-row>
       <el-row type="flex" style="margin-top: 20px">
@@ -290,7 +292,7 @@
       <el-row>
         <span v-html="oneDiaList.question" />
       </el-row>
-      <el-row style="margin-top: 20px">
+      <el-row>
         <span>单选题 选项：（以下选中的选项为正确答案）</span>
       </el-row>
       <el-radio-group :value="isRight">
@@ -307,12 +309,19 @@
         <span>【参考答案】：<el-button
           type="danger"
           size="small"
+          @click="showVideo=true"
         >视频答案预览</el-button></span>
+        <el-col v-if="showVideo">
+          <video :src="oneDiaList.videoURL" controls />
+        </el-col>
       </el-row>
       <hr>
-      <span>【答案解析】：<span v-html="oneDiaList.answer" /></span>
+      <el-row type="flex" style="height:20px">
+        【答案解析】：
+        <span v-html="oneDiaList.answer" />
+      </el-row>
       <hr>
-      <el-row style="margin-top: 20px">
+      <el-row>
         <span>【题目备注】：{{ oneDiaList.remarks }}</span>
       </el-row>
       <el-row type="flex" style="margin-top: 20px" justify="end">
@@ -359,6 +368,7 @@ import {
   getDirectorysAPI,
   getQuestionsCheckAPI,
   getQuestionsChoiceAPI,
+  getQuestionsDeleteAPI,
   getQuestionsIdAPI,
   getSubjectsSimpleAPI,
   getTagsAPI,
@@ -386,7 +396,8 @@ export default {
         remarks: null,
         shortName: null,
         province: null,
-        city: null
+        city: null,
+        chkState: null
       },
       tableData: [],
       selectList: [],
@@ -418,6 +429,7 @@ export default {
       isRight: 1,
       oneDiaList: {},
       twoDia: false,
+      showVideo: false,
       CheckData: { chkState: '', chkRemarks: '', id: '' },
       publishStateData: { id: '', publishState: 0 },
       rules: {
@@ -462,6 +474,18 @@ export default {
     },
     // 标签页切换
     onTab(xxx) {
+      if (xxx.label === '全部') {
+        this.getQuestionsChoice()
+      } else if (xxx.label === '待审核') {
+        this.params.chkState = 0
+        this.getQuestionsChoice()
+      } else if (xxx.label === '已审核') {
+        this.params.chkState = 1
+        this.getQuestionsChoice()
+      } else {
+        this.params.chkState = 2
+        this.getQuestionsChoice()
+      }
       console.log(xxx.label)
     },
     // 学科选中值变化
@@ -491,9 +515,9 @@ export default {
       this.getQuestionsChoice()
       this.twoDia = false
     },
-    // 下架
+    // 下架和删除
     onPublishState(xxx) {
-      this.publishStateData.id = xxx
+      this.publishStateData = { id: xxx, publishState: 0 }
       this.$confirm('您确定下架这道题目吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -510,6 +534,29 @@ export default {
           this.$message({
             type: 'info',
             message: '已取消下架'
+          })
+        })
+      this.getQuestionsChoice()
+    },
+    // 删除
+    getDelete(xxx) {
+      this.publishStateData = { id: xxx }
+      this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          await getQuestionsDeleteAPI(this.publishStateData)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
           })
         })
       this.getQuestionsChoice()
