@@ -15,7 +15,6 @@ const data = Mock.mock({
   'pagesize': 10,
   'page': 1
 })
-console.log('mock总苏剧', data)
 Mock.mock(/\/api\/users\?page=\d+&pagesize=\d+/, 'get',
   function(options) {
     const url = options.url // 获取完整的 URL，例如：'/api/users?page=1&pageSize=10'
@@ -29,8 +28,7 @@ Mock.mock(/\/api\/users\?page=\d+&pagesize=\d+/, 'get',
       return obj
     }, {}) // 将查询字符串转换成对象格式，例如：{"page": "1", "pageSize": "10"}
 
-    console.log(queryObj) // 输出请求参数，例如：{"page": "1", "pageSize": "10"}
-    console.log(222, data)
+    // console.log(queryObj) // 输出请求参数，例如：{"page": "1", "pageSize": "10"}
     const users = data.users.slice((+queryObj.page - 1) * +queryObj.pagesize, +queryObj.page * +queryObj.pagesize)
     const pages = data.pages
     return {
@@ -40,3 +38,21 @@ Mock.mock(/\/api\/users\?page=\d+&pagesize=\d+/, 'get',
   }
 
 )
+
+Mock.mock(/\/api\/users/, 'delete', (option) => {
+  console.log(option)
+  if (option.id) {
+    return {
+      success: true
+    }
+  } else {
+    return {
+      success: false
+    }
+  }
+})
+
+Mock.mock(/\/api\/users\/yy/, 'get', (option) => {
+  console.log(option)
+  return []
+})

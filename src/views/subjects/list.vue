@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <el-alert title="数据一共 241 条" type="info" :closable="false" show-icon style="margin-bottom:15px" />
+      <el-alert :title="'数据一共'+counts+'条'" type="info" :closable="false" show-icon style="margin-bottom:15px" />
       <el-table :data="tableData" style="width: 100% " :header-cell-style="{background:'#fafafa' }">
         <el-table-column prop="id" label="序号" width="80">
           <template #default="{$index}">{{ $index }}</template>
@@ -30,7 +30,13 @@
         </el-table-column>
         <el-table-column prop="subjectName" label="学科名称" width="180" />
         <el-table-column prop="username" label="创建者" width="90" />
-        <el-table-column prop="addDate" label="创建日期" width="200" />
+        <el-table-column prop="addDate" label="创建日期" width="200">
+          <template #default="{row}">
+            <span>
+              {{ new Date(row.addDate).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="isFrontDisplay" label="前台是否显示" width="150" />
         <el-table-column prop="twoLevelDirectory" label="二级目录" width="150" />
         <el-table-column prop="tags" label="标签" width="150" />
