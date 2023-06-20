@@ -611,7 +611,7 @@ export default {
   padding: 10px 0;
 }
 .box-card {
-  width: 1290px;
+  width: 1270px;
 }
 .widthBtn {
   width: 240px !important;
@@ -648,5 +648,8 @@ export default {
 ::v-deep .el-icon-close:before {
   content: "\e6db";
   color: #fff;
+}
+.el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover{
+  box-shadow: none;
 }
 </style>
