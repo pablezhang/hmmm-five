@@ -7,12 +7,14 @@
       <template #default>
         <el-form ref="questionData" label-width="120px" :model="questionData" :rules="rules">
           <el-form-item label="学科:" prop="subjectID">
-            <el-select v-model="questionData.subjectID" style="width:400px">
+            <el-select v-model="questionData.subjectID" style="width:400px" @change="onChange">
               <el-option v-for="(item,index) in subjectList" :key="index" :value="item.value" :label="item.label" />
             </el-select>
           </el-form-item>
           <el-form-item label="目录:" prop="catalogID">
-            <el-select v-model="questionData.catalogID" style="width:400px" />
+            <el-select v-model="questionData.catalogID" style="width:400px">
+              <el-option v-for="item in catalogList" :key="item.id" :value="item.id" :label="item.directoryName" />
+            </el-select>
           </el-form-item>
           <el-form-item label="企业:" prop="enterpriseID">
             <el-select v-model="questionData.enterpriseID" style="width:400px">
@@ -24,7 +26,16 @@
             <el-select v-model="questionData.city" style="width:198px" />
           </el-form-item>
           <el-form-item label="方向:" prop="direction">
-            <el-select v-model="questionData.direction" style="width:400px" />
+            <el-select v-model="questionData.direction" style="width:400px">
+              <el-option value="o2o" label="o2o" />
+              <el-option value="外包服务" label="外包服务" />
+              <el-option value="企业服务" label="企业服务" />
+              <el-option value="互联网金融" label="互联网金融" />
+              <el-option value="企业咨询" label="企业咨询" />
+              <el-option value="互联网" label="互联网" />
+              <el-option value="电子商务" label="电子商务" />
+              <el-option value="其他" label="其他" />
+            </el-select>
           </el-form-item>
           <el-form-item label="题型:" prop="questionType">
             <el-radio-group v-model="questionData.questionType">
@@ -47,9 +58,9 @@
             <div class="option">
               <el-radio-group v-model="questionData.code" class="stemOption">
                 <el-radio v-for="index in 4" :key="index" :value="index" :label="index" class="radioStem">
-                  {{ index }}:<el-input v-model="questionData[index].title" style="width:240px" class="stemContent" />
+                  {{ index }}:<el-input v-model="questionData.title" style="width:240px" class="stemContent" />
                   <el-upload
-                    v-model="questionData[index].img"
+                    v-model="questionData.img"
                     action=""
                     list-type="picture-card"
                   >
@@ -71,7 +82,9 @@
             <el-input v-model="questionData.remarks" type="textarea" rows="4" style="width:400px" />
           </el-form-item>
           <el-form-item label="试题标签:">
-            <el-select v-model="questionData.tags" placeholder="请选择试题标签" style="width:400px" />
+            <el-select v-model="questionData.tags" placeholder="请选择试题标签" style="width:400px">
+              <el-option v-for="item in tagsList" :key="item.id" :value="item.id" :label="item.tagName" />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">确认提交</el-button>
@@ -88,13 +101,17 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 import { getCompanyListAPI, getSimpleSubjectListAPI } from '@/api/question-new'
+import { getCatalogListAPI } from '@/api/directorys'
+import { getTagsListAPI } from '@/api/tags'
 export default {
   components: { quillEditor },
   data() {
     return {
       listData: ['A', 'B', 'C', 'D'],
-      subjectList: [],
-      companyList: [],
+      subjectList: [], // 学科
+      catalogList: [], // 目录列表
+      companyList: [], // 企业
+      tagsList: [], // 标签
       questionData: {
         subjectID: '',
         catalogID: '',
@@ -168,6 +185,13 @@ export default {
       this.subjectList = res
       const { items } = await getCompanyListAPI()
       this.companyList = items
+    },
+
+    async  onChange(currentVal) {
+      const { items } = await getCatalogListAPI({ subjectID: currentVal })
+      this.catalogList = items
+      const res = await getTagsListAPI({ subjectID: currentVal })
+      this.tagsList = res.items
     },
     onSubmit() {
       this.$refs.questionData.validate()
