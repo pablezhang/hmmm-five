@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog width="400px" :visible="visible" title="新增目录" @close="$emit('update:visible',false)">
+    <el-dialog width="400px" :visible="visible" :title="formData.id?'修改标签':'新增标签'" @close="$emit('update:visible',false)">
       <el-form ref="form" :model="formData" label-width="80px" :rules="rules">
         <el-form-item label="所属学科" prop="subjectID">
           <el-select v-model="formData.subjectID" size="small" style="width:100%">
@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import { getSubjectListAPI, updateCatalogDetailAPI } from '@/api/directorys'
-import { addTagsListAPI } from '@/api/tags'
+import { getSubjectListAPI } from '@/api/directorys'
+import { addTagsListAPI, editTagsListAPI } from '@/api/tags'
 export default {
   props: {
     visible: {
@@ -68,7 +68,7 @@ export default {
         if (!this.formData.id) {
           await addTagsListAPI(this.formData)
         } else {
-          await updateCatalogDetailAPI(this.formData)
+          await editTagsListAPI(this.formData)
         }
         this.$message.success(this.formData.id ? '编辑标签成功' : '新增标签成功')
         this.$emit('updateTable')

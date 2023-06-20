@@ -15,3 +15,8 @@ export const addTagsListAPI = (data) => {
 export const detailTagsListAPI = (id) => {
   return request({ url: `/tags/${id}` })
 }
+
+export const editTagsListAPI = (data) => {
+  return request({ url: `/tags/${data.id}`, method: 'put', data })
+}
+

@@ -60,8 +60,8 @@
 </template>
 
 <script>
-import { getCatalogDetailAPI, updateStatusAPI } from '@/api/directorys'
-import { delTagsAPI, getTagsListAPI } from '@/api/tags'
+import { updateStatusAPI } from '@/api/directorys'
+import { delTagsAPI, detailTagsListAPI, getTagsListAPI } from '@/api/tags'
 import TagDialog from './components/tag-dialog.vue'
 export default {
   components: { TagDialog },
@@ -86,7 +86,6 @@ export default {
   methods: {
     async renderTable() {
       const res = await getTagsListAPI(this.reqParameter)
-      console.log('res  ----->  ', res)
       this.tableList = res.items
       this.counts = res.counts
       this.pages = res.pages
@@ -116,9 +115,9 @@ export default {
       this.renderTable(this.reqParameter)
       this.$message.success('已重置表格数据')
     },
-    // 修改目录
+    // 数据回填
     async editData(id) {
-      const res = await getCatalogDetailAPI(id)
+      const res = await detailTagsListAPI(id)
       this.$refs.dialog.formData = res
       this.visible = true
     },
