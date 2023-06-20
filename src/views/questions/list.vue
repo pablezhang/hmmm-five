@@ -362,6 +362,13 @@ export default {
       options: []
     }
   },
+  watch: {
+    visible(newValue) {
+      if (!newValue) {
+        this.isShowVideo = false
+      }
+    }
+  },
   created() {
     this.getQuestions()
     this.getSubjects()
