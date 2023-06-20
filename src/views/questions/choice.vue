@@ -11,7 +11,7 @@
         </el-col>
         <el-col :span="2">
           <el-button
-            type="danger"
+            type="success"
             size="small"
             @click="$router.push('/questions/new')"
           >
@@ -148,8 +148,8 @@
             </el-col>
             <el-col :span="6">
               <el-row type="flex" justify="end">
-                <el-button size="small" @click="onClean">清除</el-button>
-                <el-button size="small" type="primary" @click="onSearch">搜素</el-button>
+                <el-button @click="onClean">清除</el-button>
+                <el-button type="primary" @click="onSearch">搜素</el-button>
               </el-row>
             </el-col>
           </el-row>
@@ -323,7 +323,7 @@
       <el-divider />
       <el-row>
         <span>【参考答案】：<el-button
-          type="danger"
+          type="success"
           size="small"
           @click="showVideo=true"
         >视频答案预览</el-button></span>
