@@ -246,7 +246,7 @@
       <el-divider />
       <el-row style="margin-bottom: 15px">【题干】：</el-row>
 
-      <div style="margin-bottom: 15px" v-html="viewData.question" />
+      <div style="margin-bottom: 15px;color:blue" v-html="viewData.question" />
 
       <el-row>
         <el-col
@@ -277,14 +277,23 @@
         >
           多选题 选项：（以下选中的选项为正确答案）
         </el-col>
-        <el-checkbox-group v-if="viewData.questionType === '2'" :value="[1]">
-          <el-checkbox
-            v-for="item in options"
-            :key="item.id"
-            :label="item.isRight"
+        <el-col v-if="viewData.questionType === '2'">
+          <el-checkbox-group
+            :value="[1]"
+            style="
+              display: flex;
+              flex-flow: column nowrap;
+              align-items: flex-start;
+            "
           >
-            {{ item.title }}</el-checkbox>
-        </el-checkbox-group>
+            <el-checkbox
+              v-for="item in options"
+              :key="item.id"
+              :label="item.isRight"
+            >
+              {{ item.title }}</el-checkbox>
+          </el-checkbox-group>
+        </el-col>
       </el-row>
       <el-divider />
       <el-row>
@@ -298,8 +307,8 @@
       </el-row>
       <el-divider />
       <el-row type="flex">
-        【答案解析】：
-        <div v-html="viewData.answer" />
+        <el-col :span="4">【答案解析】：</el-col>
+        <el-col><span v-html="viewData.answer" /></el-col>
       </el-row>
       <el-divider />
       <el-row> 【题目备注】：{{ viewData.remarks }} </el-row>
@@ -351,6 +360,13 @@ export default {
       provinceList: [],
       cityList: [],
       options: []
+    }
+  },
+  watch: {
+    visible(newValue) {
+      if (!newValue) {
+        this.isShowVideo = false
+      }
     }
   },
   created() {
@@ -469,6 +485,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .header {
   display: flex;
 
