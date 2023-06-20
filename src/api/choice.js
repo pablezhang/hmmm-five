@@ -19,3 +19,9 @@ export const getQuestionsIdAPI = (id) => { return request({ url: `/questions/${i
 
 // 试题审核
 export const getQuestionsCheckAPI = (data) => { return request({ url: ` /questions/check/${data.id}`, method: 'POST', data }) }
+
+// 精选题库上下架
+export const getChoicePublishStateAPI = (data) => { return request({ url: ` /questions/choice/${data.id}/${data.publishState}`, method: 'POST' }) }
+
+// 题库删除
+export const getQuestionsDeleteAPI = (id) => { return request({ url: `/questions/${id}`, method: 'DELETE' }) }
