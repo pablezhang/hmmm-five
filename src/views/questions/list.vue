@@ -36,41 +36,68 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="关键字">
-              <el-input v-model="questionSearchData.keyword" placeholder="根据题干搜索" />
+              <el-input
+                v-model="questionSearchData.keyword"
+                placeholder="根据题干搜索"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" :gutter="32">
           <el-col :span="8">
             <el-form-item label="试题类型">
-              <el-input />
+              <el-select v-model="questionSearchData.questionType">
+                <el-option value="1" label="单选" />
+                <el-option value="2" label="多选" />
+                <el-option value="3" label="简答" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="难度">
-              <el-input />
+              <el-select v-model="questionSearchData.difficulty">
+                <el-option value="1" label="简单" />
+                <el-option value="2" label="困难" />
+                <el-option value="3" label="一般" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="方向">
-              <el-input />
+              <el-select v-model="questionSearchData.direction">
+                <el-option value="o2o" label="o2o" />
+                <el-option value="外包服务" label="外包服务" />
+                <el-option value="企业服务" label="企业服务" />
+                <el-option value="互联网金融" label="互联网金融" />
+                <el-option value="企业咨询" label="企业咨询" />
+                <el-option value="互联网" label="互联网" />
+                <el-option value="电子商务" label="电子商务" />
+                <el-option value="其他" label="其他" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="录入人">
-              <el-input />
+              <el-select v-model="questionSearchData.creatorID">
+                <el-option
+                  v-for="item in creatorList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.username"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" :gutter="32">
           <el-col :span="8">
             <el-form-item label="题目备注">
-              <el-input />
+              <el-input v-model="questionSearchData.remarks" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="企业简称">
-              <el-input />
+              <el-input v-model="questionSearchData.shortName" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -81,18 +108,22 @@
           </el-col>
           <el-col :span="8">
             <el-form-item style="display: flex; justify-content: end">
-              <el-button>清除</el-button>
-              <el-button type="primary">搜索</el-button>
+              <el-button @click="onReset">清除</el-button>
+              <el-button type="primary" @click="onSearch">搜索</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <el-alert
         style="margin-bottom: 15px"
-        title="数据一共X条"
         type="info"
         show-icon
-      />
+        :closable="false"
+      >
+        <div slot="title">
+          {{ `数据一共${total}条` }}
+        </div>
+      </el-alert>
       <el-table
         :data="tableList"
         :header-cell-style="{ background: '#fafafa' }"
@@ -102,7 +133,7 @@
         <el-table-column prop="catalog" label="目录" width="100px" />
         <el-table-column prop="questionType" label="题型" width="100px">
           <template #default="{ row }">
-            {{ ["多选", "单选"][row.questionType] }}
+            {{ ["单选", "多选", "简答"][row.questionType - 1] }}
           </template>
         </el-table-column>
         <el-table-column prop="question" label="题干" width="280px">
@@ -110,10 +141,18 @@
             <div v-html="row.question" />
           </template>
         </el-table-column>
-        <el-table-column prop="addDate" label="录入时间" width="180px" />
+        <el-table-column prop="addDate" label="录入时间" width="180px">
+          <template #default="{ row }">
+            {{
+              new Date(row.addDate)
+                .toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })
+                .replace(/\//g, "-")
+            }}
+          </template>
+        </el-table-column>
         <el-table-column prop="difficulty" label="难度" width="100px">
           <template #default="{ row }">
-            {{ ["困难", "简单"][row.difficulty] }}
+            {{ ["简单", "困难", "一般"][row.difficulty - 1] }}
           </template>
         </el-table-column>
         <el-table-column prop="creator" label="录入人" width="100px" />
@@ -133,6 +172,7 @@
               icon="el-icon-edit"
               circle
               plain
+              @click="$router.push(`/questions/new/${row.id}`)"
             />
             <el-button
               size="mini"
@@ -148,6 +188,7 @@
               icon="el-icon-check"
               circle
               plain
+              @click="onAddChoice(row)"
             />
           </template>
         </el-table-column>
@@ -208,9 +249,11 @@
 
 <script>
 import {
+  addChoiceAPI,
   deleteQuestionsAPI,
   gerQuestionsAPI,
   gerQuestionsViewAPI,
+  getCreatorAPI,
   getSubjectsAPI
 } from '@/api/questions'
 export default {
@@ -238,12 +281,14 @@ export default {
       visible: false,
       viewData: {},
       subjectName: '',
-      subjectList: []
+      subjectList: [],
+      creatorList: []
     }
   },
   created() {
     this.getQuestions()
     this.getSubjects()
+    this.getCreator()
   },
   methods: {
     async getQuestions() {
@@ -257,6 +302,11 @@ export default {
       // console.log(res)
       this.subjectList = res
     },
+    async getCreator() {
+      const res = await getCreatorAPI(this.questionSearchData)
+      // console.log(res)
+      this.creatorList = res
+    },
     async onView(row) {
       this.visible = true
       const res = await gerQuestionsViewAPI(row.id)
@@ -268,16 +318,62 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(async() => {
-        await deleteQuestionsAPI(row.id)
-        this.getQuestions()
-        this.$message.success('删除部门成功')
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
       })
+        .then(async() => {
+          await deleteQuestionsAPI(row.id)
+          this.getQuestions()
+          this.$message.success('删除部门成功')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    async onAddChoice(row) {
+      this.$confirm('此操作将该题目加入精选, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      })
+        .then(async() => {
+          await addChoiceAPI({ id: row.id, choiceState: row.choiceState })
+          this.getQuestions()
+          this.$message.success('加入精选成功')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消加入精选'
+          })
+        })
+    },
+    onReset() {
+      this.questionSearchData = {
+        page: 1, // 当前页数
+        pagesize: 10, // 页尺寸
+        subjectID: '', // 学科
+        difficulty: '', // 难度
+        questionType: '', // 试题类型
+        tags: '', // 标签名称
+        province: '', // 企业所在地省份
+        city: '', // 企业所在城市
+        keyword: '', // 关键字
+        remarks: '', // 题目备注
+        shortName: '', // 企业简称
+        direction: '', // 方向
+        creatorID: '', // 录入人
+        catalogID: '' // 目录
+      }
+      this.getQuestions()
+    },
+    onSearch() {
+      this.questionSearchData = {
+        ...this.questionSearchData
+      }
+      this.questionSearchData.page = 1
+      this.getQuestions()
     }
   }
 }

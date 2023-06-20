@@ -20,9 +20,25 @@ export const gerQuestionsViewAPI = (id) => {
   })
 }
 
+export const addChoiceAPI = ({ id, choiceState }) => {
+  return request({
+    method: 'patch',
+    url: `/questions/choice/${id}/${choiceState}`
+
+  })
+}
+
 export const getSubjectsAPI = (data) => {
   return request({
     url: ' /subjects/simple',
     data
   })
 }
+
+export const getCreatorAPI = (data) => {
+  return request({
+    url: ' /users/simple',
+    data
+  })
+}
+
