@@ -57,10 +57,11 @@
       <el-row type="flex" justify="end">
         <el-pagination
           background
-          :page-sizes="[10, 20, 40, 50]"
+          :page-sizes="[5, 10, 20, 50]"
           :page-size="pageParams.pagesize"
-          layout="prev, pager, next, jumper"
+          layout="total,prev, pager, next,sizes,jumper"
           :total="pageParams.total"
+          @size-change="onSize"
           @current-change="onChange"
         />
       </el-row>
@@ -165,7 +166,7 @@ export default {
     this.getArticles()
   },
   methods: {
-    async  getArticles() {
+    async getArticles() {
       const res = await getArticlesAPI(this.pageParams)
       this.tableList = res.items
       this.pageParams.total = res.counts
@@ -173,6 +174,10 @@ export default {
     onChange(page) {
       this.pageParams.page = page
       this.getArticles(this.pageParams)
+    },
+    onSize(value) {
+      this.pageParams.pagesize = value
+      this.getArticles()
     },
     async onOpen(id, state) {
       await stateArticlesAPI({ id, state })
