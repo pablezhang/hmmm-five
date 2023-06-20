@@ -210,20 +210,24 @@
       <el-pagination
         style="margin-top: 20px; text-align: right"
         background
+        :current-page="questionSearchData.page"
+        :page-size="questionSearchData.pagesize"
         :page-sizes="[5, 10, 20, 50]"
-        layout="prev, pager, next,sizes,jumper"
+        layout=" sizes, prev, pager, next, jumper"
         :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
     </el-card>
     <el-dialog :visible.sync="visible" title="题目预览" width="60%">
       <el-row :gutter="32" type="flex" style="margin-bottom: 20px">
         <el-col
           :span="8"
-        >【题型】：{{ ["多选", "单选"][viewData.questionType] }}</el-col>
+        >【题型】：{{ ["单选", "多选", "简答"][viewData.questionType - 1] }}</el-col>
         <el-col :span="8">【编号】：{{ viewData.id }}</el-col>
         <el-col
           :span="8"
-        >【难度】：{{ ["困难", "简单"][viewData.difficulty] }}</el-col>
+        >【难度】：{{ ["简单", "困难", "一般"][viewData.difficulty - 1] }}</el-col>
         <el-col :span="8">【标签】：{{ viewData.tags }}</el-col>
       </el-row>
       <el-row :gutter="32">
@@ -234,8 +238,22 @@
       <el-divider />
       <el-row>【题干】：</el-row>
       <el-row>
-        <el-col> 单选题 选项：（以下选中的选项为正确答案） </el-col>
-        <el-col />
+        <el-col v-if="viewData.questionType==='1'"> 单选题 选项：（以下选中的选项为正确答案） </el-col>
+        <el-col v-if="viewData.questionType==='1'">
+          <el-radio-group :value="1">
+            <el-radio :label="options[0].isRight">{{ options[0].title }}</el-radio>
+            <el-radio :label="options[1].isRight">{{ options[1].title }}</el-radio>
+            <el-radio :label="options[2].isRight">{{ options[2].title }}</el-radio>
+            <el-radio :label="options[3].isRight">{{ options[3].title }}</el-radio>
+          </el-radio-group>
+        </el-col>
+        <el-col v-if="viewData.questionType==='2'"> 多选题 选项：（以下选中的选项为正确答案） </el-col>
+        <el-checkbox-group v-if="viewData.questionType==='2'" :value="1">
+          <el-checkbox :label="options[0].isRight"> {{ options[0].title }}</el-checkbox>
+          <el-checkbox :label="options[1].isRight"> {{ options[1].title }}</el-checkbox>
+          <el-checkbox :label="options[2].isRight"> {{ options[2].title }}</el-checkbox>
+          <el-checkbox :label="options[3].isRight">{{ options[3].title }}</el-checkbox>
+        </el-checkbox-group>
       </el-row>
       <el-divider />
       <el-row>
@@ -300,7 +318,8 @@ export default {
       subjectList: [],
       creatorList: [],
       provinceList: [],
-      cityList: []
+      cityList: [],
+      options: []
     }
   },
   created() {
@@ -320,7 +339,6 @@ export default {
       // console.log(res)
       this.cityList = res.data.list
     },
-
     async getQuestions() {
       const res = await gerQuestionsAPI(this.questionSearchData)
       console.log(res)
@@ -340,8 +358,10 @@ export default {
     async onView(row) {
       this.visible = true
       const res = await gerQuestionsViewAPI(row.id)
-      console.log(res)
+      // console.log(res)
       this.viewData = res
+      this.options = res.options
+      console.log(this.options)
     },
     async onDelete(row) {
       this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
@@ -368,7 +388,7 @@ export default {
         type: 'info'
       })
         .then(async() => {
-          await addChoiceAPI({ id: row.id, choiceState: row.choiceState })
+          await addChoiceAPI({ id: row.id, choiceState: 1 })
           this.getQuestions()
           this.$message.success('加入精选成功')
         })
@@ -403,6 +423,14 @@ export default {
         ...this.questionSearchData
       }
       this.questionSearchData.page = 1
+      this.getQuestions()
+    },
+    handleSizeChange(value) {
+      this.questionSearchData.pagesize = value
+      this.getQuestions()
+    },
+    handleCurrentChange(value) {
+      this.questionSearchData.page = value
       this.getQuestions()
     }
   }
