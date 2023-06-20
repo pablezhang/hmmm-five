@@ -102,8 +102,22 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="城市">
-              <el-input style="width: 100px" />
-              <el-input style="width: 100px; margin-left: 5px" />
+              <el-select v-model="questionSearchData.province" style="width: 100px" @change="getCity">
+                <el-option
+                  v-for="item in provinceList"
+                  :key="item"
+                  :value="item"
+                  :label="item"
+                />
+              </el-select>
+              <el-select v-model="questionSearchData.city" style="width: 100px">
+                <el-option
+                  v-for="item in cityList"
+                  :key="item"
+                  :value="item"
+                  :label="item"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -253,7 +267,9 @@ import {
   deleteQuestionsAPI,
   gerQuestionsAPI,
   gerQuestionsViewAPI,
+  getCityAPI,
   getCreatorAPI,
+  getProvinceAPI,
   getSubjectsAPI
 } from '@/api/questions'
 export default {
@@ -282,15 +298,29 @@ export default {
       viewData: {},
       subjectName: '',
       subjectList: [],
-      creatorList: []
+      creatorList: [],
+      provinceList: [],
+      cityList: []
     }
   },
   created() {
     this.getQuestions()
     this.getSubjects()
     this.getCreator()
+    this.getProvince()
   },
   methods: {
+    async getProvince() {
+      const res = await getProvinceAPI()
+      // console.log(res)
+      this.provinceList = res.data.list
+    },
+    async getCity(value) {
+      const res = await getCityAPI({ pname: value })
+      // console.log(res)
+      this.cityList = res.data.list
+    },
+
     async getQuestions() {
       const res = await gerQuestionsAPI(this.questionSearchData)
       console.log(res)

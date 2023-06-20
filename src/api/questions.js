@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request, { requestTwo } from '@/utils/request'
 
 export const gerQuestionsAPI = (data) => {
   return request({
@@ -42,3 +42,15 @@ export const getCreatorAPI = (data) => {
   })
 }
 
+export const getProvinceAPI = () => {
+  return requestTwo({
+    url: '/api/province'
+  })
+}
+
+export const getCityAPI = (params) => {
+  return requestTwo({
+    url: '/api/city',
+    params
+  })
+}
