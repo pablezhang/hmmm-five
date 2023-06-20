@@ -28,35 +28,36 @@
           </el-form-item>
           <el-form-item label="题型:" prop="questionType">
             <el-radio-group v-model="questionData.questionType">
-              <el-radio :label="3">单选</el-radio>
-              <el-radio :label="6">多选</el-radio>
-              <el-radio :label="9">简答</el-radio>
+              <el-radio :label="1">单选</el-radio>
+              <el-radio :label="2">多选</el-radio>
+              <el-radio :label="3">简答</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="难度:" prop="difficulty">
             <el-radio-group v-model="questionData.difficulty">
-              <el-radio :label="3">简单</el-radio>
-              <el-radio :label="6">一般</el-radio>
-              <el-radio :label="9">困难</el-radio>
+              <el-radio :label="1">简单</el-radio>
+              <el-radio :label="2">一般</el-radio>
+              <el-radio :label="3">困难</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="题干:" class="textEdit" prop="question">
             <quillEditor v-model="questionData.question" :options="editorOption" style="width:800px;height:200px" />
           </el-form-item>
           <el-form-item label="选项:">
-            <div v-for="item in listData.length" :key="item" class="option">
-              <el-row type="flex" align="middle">
-                <el-radio v-model="questionData.code" value="item" label="item">{{ item }}:</el-radio>
-                <el-input v-model="questionData.title" style="width:240px" />
-                <el-upload
-                  v-model="questionData.img"
-                  action=""
-                  list-type="picture-card"
-                >
-                  <span>上传图片</span>
-                  <i class="el-icon-circle-close" />
-                </el-upload>
-              </el-row>
+            <div class="option">
+              <el-radio-group v-model="questionData.code" class="stemOption">
+                <el-radio v-for="index in 4" :key="index" :value="index" :label="index" class="radioStem">
+                  {{ index }}:<el-input v-model="questionData[index].title" style="width:240px" class="stemContent" />
+                  <el-upload
+                    v-model="questionData[index].img"
+                    action=""
+                    list-type="picture-card"
+                  >
+                    <span>上传图片</span>
+                    <i class="el-icon-circle-close" />
+                  </el-upload>
+                </el-radio>
+              </el-radio-group>
             </div>
             <el-button class="addOption">+增加选项与答案</el-button>
           </el-form-item>
@@ -198,7 +199,7 @@ export default {
     }
   }
 
-  .el-radio{
+.el-radio{
     margin-right: 15px;
   }
 
@@ -226,6 +227,26 @@ export default {
 
     span{
       font-size: 12px;
+    }
+  }
+
+ ::v-deep .stemOption{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: center;
+    .stemContent{
+      margin-left: 5px;
+    }
+    .radioStem{
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+       .el-radio__label{
+      display: flex;
+      align-items: center;
+    }
     }
   }
 </style>
