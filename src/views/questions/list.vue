@@ -57,8 +57,8 @@
             <el-form-item label="难度">
               <el-select v-model="questionSearchData.difficulty">
                 <el-option value="1" label="简单" />
-                <el-option value="2" label="困难" />
-                <el-option value="3" label="一般" />
+                <el-option value="2" label="一般" />
+                <el-option value="3" label="困难" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -102,7 +102,11 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="城市">
-              <el-select v-model="questionSearchData.province" style="width: 100px" @change="getCity">
+              <el-select
+                v-model="questionSearchData.province"
+                style="width: 100px"
+                @change="getCity"
+              >
                 <el-option
                   v-for="item in provinceList"
                   :key="item"
@@ -166,7 +170,7 @@
         </el-table-column>
         <el-table-column prop="difficulty" label="难度" width="100px">
           <template #default="{ row }">
-            {{ ["简单", "困难", "一般"][row.difficulty - 1] }}
+            {{ ["简单", "一般", "困难"][row.difficulty - 1] }}
           </template>
         </el-table-column>
         <el-table-column prop="creator" label="录入人" width="100px" />
@@ -210,20 +214,28 @@
       <el-pagination
         style="margin-top: 20px; text-align: right"
         background
+        :current-page="questionSearchData.page"
+        :page-size="questionSearchData.pagesize"
         :page-sizes="[5, 10, 20, 50]"
-        layout="prev, pager, next,sizes,jumper"
+        layout=" sizes, prev, pager, next, jumper"
         :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
     </el-card>
     <el-dialog :visible.sync="visible" title="题目预览" width="60%">
       <el-row :gutter="32" type="flex" style="margin-bottom: 20px">
         <el-col
           :span="8"
-        >【题型】：{{ ["多选", "单选"][viewData.questionType] }}</el-col>
+        >【题型】：{{
+          ["单选", "多选", "简答"][viewData.questionType - 1]
+        }}</el-col>
         <el-col :span="8">【编号】：{{ viewData.id }}</el-col>
         <el-col
           :span="8"
-        >【难度】：{{ ["困难", "简单"][viewData.difficulty] }}</el-col>
+        >【难度】：{{
+          ["简单", "一般", "困难"][viewData.difficulty - 1]
+        }}</el-col>
         <el-col :span="8">【标签】：{{ viewData.tags }}</el-col>
       </el-row>
       <el-row :gutter="32">
@@ -232,10 +244,47 @@
         <el-col :span="8">【方向】：{{ viewData.direction }}</el-col>
       </el-row>
       <el-divider />
-      <el-row>【题干】：</el-row>
+      <el-row style="margin-bottom: 15px">【题干】：</el-row>
+
+      <div style="margin-bottom: 15px" v-html="viewData.question" />
+
       <el-row>
-        <el-col> 单选题 选项：（以下选中的选项为正确答案） </el-col>
-        <el-col />
+        <el-col
+          v-if="viewData.questionType === '1'"
+          style="margin-bottom: 15px"
+        >
+          单选题 选项：（以下选中的选项为正确答案）
+        </el-col>
+        <el-col v-if="viewData.questionType === '1'">
+          <el-radio-group
+            :value="1"
+            style="
+              display: flex;
+              flex-flow: column nowrap;
+              align-items: flex-start;
+            "
+          >
+            <el-radio
+              v-for="item in options"
+              :key="item.id"
+              :label="item.isRight"
+            >{{ item.title }}</el-radio>
+          </el-radio-group>
+        </el-col>
+        <el-col
+          v-if="viewData.questionType === '2'"
+          style="margin-bottom: 15px"
+        >
+          多选题 选项：（以下选中的选项为正确答案）
+        </el-col>
+        <el-checkbox-group v-if="viewData.questionType === '2'" :value="[1]">
+          <el-checkbox
+            v-for="item in options"
+            :key="item.id"
+            :label="item.isRight"
+          >
+            {{ item.title }}</el-checkbox>
+        </el-checkbox-group>
       </el-row>
       <el-divider />
       <el-row>
@@ -278,29 +327,30 @@ export default {
       questionSearchData: {
         page: 1, // 当前页数
         pagesize: 10, // 页尺寸
-        subjectID: '', // 学科
-        difficulty: '', // 难度
-        questionType: '', // 试题类型
-        tags: '', // 标签名称
-        province: '', // 企业所在地省份
-        city: '', // 企业所在城市
-        keyword: '', // 关键字
-        remarks: '', // 题目备注
-        shortName: '', // 企业简称
-        direction: '', // 方向
-        creatorID: '', // 录入人
-        catalogID: '' // 目录
+        subjectID: null, // 学科
+        difficulty: null, // 难度
+        questionType: null, // 试题类型
+        tags: null, // 标签名称
+        province: null, // 企业所在地省份
+        city: null, // 企业所在城市
+        keyword: null, // 关键字
+        remarks: null, // 题目备注
+        shortName: null, // 企业简称
+        direction: null, // 方向
+        creatorID: null, // 录入人
+        catalogID: null // 目录
       },
       total: 0,
       tableList: [],
       isShowVideo: false,
       visible: false,
       viewData: {},
-      subjectName: '',
+      subjectName: null,
       subjectList: [],
       creatorList: [],
       provinceList: [],
-      cityList: []
+      cityList: [],
+      options: []
     }
   },
   created() {
@@ -320,7 +370,6 @@ export default {
       // console.log(res)
       this.cityList = res.data.list
     },
-
     async getQuestions() {
       const res = await gerQuestionsAPI(this.questionSearchData)
       console.log(res)
@@ -342,6 +391,8 @@ export default {
       const res = await gerQuestionsViewAPI(row.id)
       console.log(res)
       this.viewData = res
+      this.options = res.options
+      // console.log(this.options)
     },
     async onDelete(row) {
       this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
@@ -368,7 +419,7 @@ export default {
         type: 'info'
       })
         .then(async() => {
-          await addChoiceAPI({ id: row.id, choiceState: row.choiceState })
+          await addChoiceAPI({ id: row.id, choiceState: 1 })
           this.getQuestions()
           this.$message.success('加入精选成功')
         })
@@ -383,18 +434,18 @@ export default {
       this.questionSearchData = {
         page: 1, // 当前页数
         pagesize: 10, // 页尺寸
-        subjectID: '', // 学科
-        difficulty: '', // 难度
-        questionType: '', // 试题类型
-        tags: '', // 标签名称
-        province: '', // 企业所在地省份
-        city: '', // 企业所在城市
-        keyword: '', // 关键字
-        remarks: '', // 题目备注
-        shortName: '', // 企业简称
-        direction: '', // 方向
-        creatorID: '', // 录入人
-        catalogID: '' // 目录
+        subjectID: null, // 学科
+        difficulty: null, // 难度
+        questionType: null, // 试题类型
+        tags: null, // 标签名称
+        province: null, // 企业所在地省份
+        city: null, // 企业所在城市
+        keyword: null, // 关键字
+        remarks: null, // 题目备注
+        shortName: null, // 企业简称
+        direction: null, // 方向
+        creatorID: null, // 录入人
+        catalogID: null // 目录
       }
       this.getQuestions()
     },
@@ -403,6 +454,14 @@ export default {
         ...this.questionSearchData
       }
       this.questionSearchData.page = 1
+      this.getQuestions()
+    },
+    handleSizeChange(value) {
+      this.questionSearchData.pagesize = value
+      this.getQuestions()
+    },
+    handleCurrentChange(value) {
+      this.questionSearchData.page = value
       this.getQuestions()
     }
   }
