@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="新增学科"
+      :title="id?'修改学科':'新增学科'"
       :visible.sync="visible"
       width="25%"
       :before-close="handleClose"
@@ -29,14 +29,13 @@
   </div>
 </template>
 <script>
-import { addSubjectsAPI } from '@/api/list'
+import { addSubjectsAPI, editSubjectsAPI, getSubjectsDetailAPI } from '@/api/list'
 export default {
   props: {
     visible: {
       type: Boolean,
       default: null
     }
-
   },
   data() {
     return {
@@ -44,8 +43,17 @@ export default {
         subjectName: '',
         isFrontDisplay: null
       },
+      id: null,
       rules: {
         subjectName: [{ required: true, message: '请输入学科名称', trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    visible(newValue, oldValue) {
+      if (!newValue) {
+        this.$refs.form.resetFields()
+        this.id = null
       }
     }
   },
@@ -54,10 +62,21 @@ export default {
       this.$emit('update:visible', false)
     },
     async onSubmit() {
-      await addSubjectsAPI(this.form)
-      this.$message.success('添加学科成功')
-      this.$emit('add')
-      this.$emit('update:visible', false)
+      this.$refs.form.validate().then(async() => {
+        this.id ? await editSubjectsAPI({ ...this.form, id: this.id })
+          : await addSubjectsAPI(this.form)
+        this.$message.success(this.id ? '修改学科成功' : '添加学科成功')
+        this.$emit('add')
+        this.$emit('update:visible', false)
+      }).catch()
+    },
+    // 回填
+    async edit(id) {
+      this.id = id
+      const res = await getSubjectsDetailAPI(id)
+      console.log(res)
+      this.form.subjectName = res.subjectName
+      this.form.isFrontDisplay = res.isFrontDisplay
     }
   }
 }

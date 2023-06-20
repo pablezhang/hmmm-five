@@ -2,9 +2,10 @@
   <div>
     <el-card class="box-card" style="margin: 10px">
       <div class="header">
-        <el-form :inline="true" label-width="80px">
+        <el-form :inline="true" label-width="80px" :model="form">
           <el-form-item label="学科名称">
             <el-input
+              v-model="form.subjectName"
               size="small"
               autocomplete="off"
               style="width: 220px"
@@ -29,7 +30,7 @@
         </el-table-column>
         <el-table-column prop="subjectName" label="学科名称" width="180" />
         <el-table-column prop="username" label="创建者" width="90" />
-        <el-table-column prop="addDate" label="创建日期" width="200"/>
+        <el-table-column prop="addDate" label="创建日期" width="200" />
         <el-table-column prop="isFrontDisplay" label="前台是否显示" width="150" />
         <el-table-column prop="twoLevelDirectory" label="二级目录" width="150" />
         <el-table-column prop="tags" label="标签" width="150" />
@@ -38,8 +39,8 @@
           <template #default="{row}">
             <el-button type="text">学科分类</el-button>
             <el-button type="text">学科标签</el-button>
-            <el-button type="text">修改</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button type="text" @click="edit(row.id)">修改</el-button>
+            <el-button type="text" @click="del(row.id)">删除</el-button>
           </template>
 
         </el-table-column>
@@ -56,12 +57,12 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <dialog-item :visible.sync="visible" @add="onLoad()" />
+    <dialog-item ref="editDialog" :visible.sync="visible" @add="onLoad()" />
   </div>
 
 </template>
 <script>
-import { getSubjectListAPI } from '@/api/list'
+import { delSubjectsAPI, getSubjectListAPI } from '@/api/list'
 import dialogItem from './components/dialog-Item.vue'
 export default {
   components: { dialogItem },
@@ -73,8 +74,12 @@ export default {
         pages: null,
         pageSize: null
       },
+      form: {
+        subjectName: ''
+      },
       counts: null,
-      visible: false
+      visible: false,
+      id: null
     }
   },
   async created() {
@@ -94,6 +99,22 @@ export default {
       this.pageList.pages = res.pages
       this.pageList.pageSize = res.pageSize
       console.log(res.counts)
+    },
+    async edit(id) {
+      await this.$refs.editDialog.edit(id)
+      this.visible = true
+      this.id = id
+    },
+    del(id) {
+      this.$confirm('此操作将永久删除该学科, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delSubjectsAPI(id)
+        await this.onLoad()
+        this.$message.success('删除成功')
+      })
     }
   }
 }
