@@ -16,17 +16,20 @@
           </el-form-item>
         </el-form>
         <div>
-          <el-button icon="el-icon-edit" type="success" size="small">新增学科</el-button>
+          <el-button icon="el-icon-edit" type="success" size="small" @click="visible=true">新增学科</el-button>
 
         </div>
       </div>
 
       <el-alert title="数据一共 241 条" type="info" :closable="false" show-icon style="margin-bottom:15px" />
-      <el-table :data="tableData" style="width: 100%" :header-cell-style="{background:'#fafafa'}">
-        <el-table-column prop="id" label="序号" width="80" />
+      <el-table :data="tableData" style="width: 100% " :header-cell-style="{background:'#fafafa' }">
+        <el-table-column prop="id" label="序号" width="80">
+          <template #default="{$index}">{{ $index }}</template>
+
+        </el-table-column>
         <el-table-column prop="subjectName" label="学科名称" width="180" />
         <el-table-column prop="username" label="创建者" width="90" />
-        <el-table-column prop="addDate" label="创建日期" width="200" />
+        <el-table-column prop="addDate" label="创建日期" width="200"/>
         <el-table-column prop="isFrontDisplay" label="前台是否显示" width="150" />
         <el-table-column prop="twoLevelDirectory" label="二级目录" width="150" />
         <el-table-column prop="tags" label="标签" width="150" />
@@ -42,42 +45,36 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        style="float:right ;margin:30px 0px "
+        style="float:right ;margin:20px 0px "
         background
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :current-page="pageList.page"
+        :page-size.sync="pageList.pageSize"
+        layout=" prev, pager, next, sizes,jumper"
+        :page-sizes="[10, 20, 30, 50,100]"
+        :total="counts"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
     </el-card>
+    <dialog-item :visible.sync="visible" @add="onLoad()" />
   </div>
+
 </template>
 <script>
 import { getSubjectListAPI } from '@/api/list'
+import dialogItem from './components/dialog-Item.vue'
 export default {
+  components: { dialogItem },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
-      currentPage4: 1
+      tableData: [],
+      pageList: {
+        page: 1,
+        pages: null,
+        pageSize: null
+      },
+      counts: null,
+      visible: false
     }
   },
   async created() {
@@ -85,11 +82,18 @@ export default {
   },
   methods: {
     handleSizeChange() {},
-    handleCurrentChange() {},
-    async  onLoad() {
-      const res = await getSubjectListAPI()
+    handleCurrentChange(page) {
+      this.pageList.page = page
+      this.onLoad({ page })
+    },
+    async  onLoad(params) {
+      const res = await getSubjectListAPI(params)
       this.tableData = res.items
       console.log(res)
+      this.counts = res.counts
+      this.pageList.pages = res.pages
+      this.pageList.pageSize = res.pageSize
+      console.log(res.counts)
     }
   }
 }
@@ -99,24 +103,9 @@ export default {
   font-size: 12px !important;
   border-radius: 3px !important;
 }
-.icon {
-  /* display: block; */
-  width: 3px;
-  height: 23px;
-  color: #f56c6c;
-  background: #fef0f0;
-  border-color: #fbc4c4;
-  border-radius: 50%;
-  padding: 16px;
-  text-align: center;
-  font-size: 12px;
-  display: flex;
-}
-.el-icon-delete{
-margin: -5px;
-}
 .header{
 display: flex;
 justify-content: space-between;
 }
+
 </style>
