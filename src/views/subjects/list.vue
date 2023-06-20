@@ -37,8 +37,8 @@
         <el-table-column prop="totals" label="题目数量" width="150" />
         <el-table-column label="操作">
           <template #default="{row}">
-            <el-button type="text">学科分类</el-button>
-            <el-button type="text">学科标签</el-button>
+            <el-button type="text" @click="$router.push('directorys')">学科分类</el-button>
+            <el-button type="text" @click="$router.push('tags')">学科标签</el-button>
             <el-button type="text" @click="edit(row.id)">修改</el-button>
             <el-button type="text" @click="del(row.id)">删除</el-button>
           </template>
