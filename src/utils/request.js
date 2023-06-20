@@ -13,6 +13,11 @@ export const requestTwo = axios.create({
   timeout: 5000
 })
 
+export const requestMock = axios.create({
+  baseURL: 'http://hmajax.mock.net/',
+  timeout: 5000
+})
+
 // 添加请求拦截器
 request.interceptors.request.use(function(config) {
   const token = getToken()
