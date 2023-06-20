@@ -28,7 +28,7 @@
         </el-table-column>
         <el-table-column prop="title" label="文章标题" width="400px">
           <template #default="{ row }">
-            <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-film" /> </span>
+            <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-film" @click="onVideo(row)" /> </span>
             <span v-else>{{ row.title }}</span>
           </template>
         </el-table-column>
@@ -100,6 +100,7 @@
       </el-row>
       <p class="p_text" v-html="detail.articleBody" />
     </el-dialog>
+
   </div>
 </template>
 <script>
@@ -114,6 +115,7 @@ export default {
   },
   data() {
     return {
+      videoVisible: true,
       visible: false,
       disabled: true,
       previewVisible: false,
@@ -193,10 +195,18 @@ export default {
       this.visible = false
       this.getArticles()
     },
-    async onDel(id) {
-      await delArticlesAPI(id)
-      this.$message.success('删除成功')
-      this.getArticles()
+    onDel(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delArticlesAPI(id)
+        this.$message({ type: 'success', message: '删除成功!' })
+        this.getArticles()
+      }).catch(() => {
+        this.$message({ type: 'success', message: '已取消删除' })
+      })
     },
     async onPreview(id) {
       this.previewVisible = true
@@ -220,6 +230,12 @@ export default {
       delete this.pageParams.keyword
       delete this.pageParams.state
       this.getArticles()
+    },
+    onVideo(row) {
+      console.log(row)
+      this.$alert(` <video src="${row.videoURL}"></video>`, '视频', {
+        dangerouslyUseHTMLString: true
+      }).catch(() => {})
     }
   }
 }
@@ -239,6 +255,7 @@ export default {
   }
 }
 .el-icon-film{
+  cursor: pointer;
   color: #00f;
   font-size: 18px;
 }
