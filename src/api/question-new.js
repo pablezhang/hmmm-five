@@ -7,3 +7,7 @@ export const getSimpleSubjectListAPI = () => {
 export const getCompanyListAPI = (params) => {
   return request({ url: '/companys' })
 }
+
+export const addOptionAPI = (data) => {
+  return request({ url: '/questions', method: 'post', data })
+}

@@ -1,9 +1,9 @@
 import request, { requestTwo } from '@/utils/request'
 
-export const gerQuestionsAPI = (data) => {
+export const gerQuestionsAPI = (params) => {
   return request({
     url: '/questions',
-    data
+    params
   })
 }
 
@@ -28,17 +28,17 @@ export const addChoiceAPI = ({ id, choiceState }) => {
   })
 }
 
-export const getSubjectsAPI = (data) => {
+export const getSubjectsAPI = (params) => {
   return request({
     url: ' /subjects/simple',
-    data
+    params
   })
 }
 
-export const getCreatorAPI = (data) => {
+export const getCreatorAPI = (params) => {
   return request({
     url: ' /users/simple',
-    data
+    params
   })
 }
 
@@ -54,3 +54,4 @@ export const getCityAPI = (params) => {
     params
   })
 }
+
