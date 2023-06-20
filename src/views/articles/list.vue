@@ -3,9 +3,9 @@
     <el-card class="card">
       <el-row>
         <el-col class="search" :span="6">关键字
-          <el-input v-model="pageParams.keyword" placeholder="根据文章标题搜索" /></el-col>
+          <el-input v-model="keyword" placeholder="根据文章标题搜索" /></el-col>
         <el-col class="search" :span="6">状态
-          <el-select v-model="pageParams.state" style="margin-left: 10px" placeholder="请选择">
+          <el-select v-model="state" style="margin-left: 10px" placeholder="请选择">
             <el-option label="启用" value="1" />
             <el-option label="禁用" value="0" />
           </el-select>
@@ -28,7 +28,7 @@
         </el-table-column>
         <el-table-column prop="title" label="文章标题" width="400px">
           <template #default="{ row }">
-            <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-video-camera-solid" /> </span>
+            <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-film" /> </span>
             <span v-else>{{ row.title }}</span>
           </template>
         </el-table-column>
@@ -125,12 +125,12 @@ export default {
         username: '',
         visits: ''
       },
+      state: '',
+      keyword: '',
       pageParams: {
         page: 1,
         pagesize: 10,
-        total: 100,
-        state: '',
-        keyword: ''
+        total: 100
       },
       formData: {
         title: '',
@@ -159,7 +159,7 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     this.getArticles()
   },
   methods: {
@@ -210,11 +210,15 @@ export default {
       this.formData = res
     },
     onSearch() {
+      this.pageParams.keyword = this.keyword
+      this.pageParams.state = this.state
       this.getArticles()
     },
     onClear() {
-      this.pageParams.keyword = ''
-      this.pageParams.state = ''
+      this.keyword = ''
+      this.state = ''
+      delete this.pageParams.keyword
+      delete this.pageParams.state
       this.getArticles()
     }
   }
@@ -234,7 +238,10 @@ export default {
     }
   }
 }
-
+.el-icon-film{
+  color: #00f;
+  font-size: 18px;
+}
 ::v-deep .el_add{
   height: 100%;
   .el-dialog__body{
