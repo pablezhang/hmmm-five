@@ -57,8 +57,8 @@
             <el-form-item label="难度">
               <el-select v-model="questionSearchData.difficulty">
                 <el-option value="1" label="简单" />
-                <el-option value="2" label="困难" />
-                <el-option value="3" label="一般" />
+                <el-option value="2" label="一般" />
+                <el-option value="3" label="困难" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -102,7 +102,11 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="城市">
-              <el-select v-model="questionSearchData.province" style="width: 100px" @change="getCity">
+              <el-select
+                v-model="questionSearchData.province"
+                style="width: 100px"
+                @change="getCity"
+              >
                 <el-option
                   v-for="item in provinceList"
                   :key="item"
@@ -166,7 +170,7 @@
         </el-table-column>
         <el-table-column prop="difficulty" label="难度" width="100px">
           <template #default="{ row }">
-            {{ ["简单", "困难", "一般"][row.difficulty - 1] }}
+            {{ ["简单", "一般", "困难"][row.difficulty - 1] }}
           </template>
         </el-table-column>
         <el-table-column prop="creator" label="录入人" width="100px" />
@@ -223,11 +227,15 @@
       <el-row :gutter="32" type="flex" style="margin-bottom: 20px">
         <el-col
           :span="8"
-        >【题型】：{{ ["单选", "多选", "简答"][viewData.questionType - 1] }}</el-col>
+        >【题型】：{{
+          ["单选", "多选", "简答"][viewData.questionType - 1]
+        }}</el-col>
         <el-col :span="8">【编号】：{{ viewData.id }}</el-col>
         <el-col
           :span="8"
-        >【难度】：{{ ["简单", "困难", "一般"][viewData.difficulty - 1] }}</el-col>
+        >【难度】：{{
+          ["简单", "一般", "困难"][viewData.difficulty - 1]
+        }}</el-col>
         <el-col :span="8">【标签】：{{ viewData.tags }}</el-col>
       </el-row>
       <el-row :gutter="32">
@@ -236,27 +244,47 @@
         <el-col :span="8">【方向】：{{ viewData.direction }}</el-col>
       </el-row>
       <el-divider />
-      <el-row>【题干】：</el-row>
+      <el-row style="margin-bottom: 15px">【题干】：</el-row>
+
+      <div style="margin-bottom: 15px" v-html="viewData.question" />
+
       <el-row>
-        <el-col v-if="viewData.questionType==='1'"> 单选题 选项：（以下选中的选项为正确答案） </el-col>
-        <el-col v-if="viewData.questionType==='1'">
-          <el-radio-group :value="1">
-            <el-radio :label="options[0].isRight">{{ options[0].title }}</el-radio>
-            <el-radio :label="options[1].isRight">{{ options[1].title }}</el-radio>
-            <el-radio :label="options[2].isRight">{{ options[2].title }}</el-radio>
-            <el-radio :label="options[3].isRight">{{ options[3].title }}</el-radio>
+        <el-col
+          v-if="viewData.questionType === '1'"
+          style="margin-bottom: 15px"
+        >
+          单选题 选项：（以下选中的选项为正确答案）
+        </el-col>
+        <el-col v-if="viewData.questionType === '1'">
+          <el-radio-group
+            :value="1"
+            style="
+              display: flex;
+              flex-flow: column nowrap;
+              align-items: flex-start;
+            "
+          >
+            <el-radio
+              v-for="item in options"
+              :key="item.id"
+              :label="item.isRight"
+            >{{ item.title }}</el-radio>
           </el-radio-group>
         </el-col>
-        <el-col v-if="viewData.questionType==='2'"> 多选题 选项：（以下选中的选项为正确答案） </el-col>
-        <el-checkbox-group v-if="viewData.questionType==='2'" :value="1">
-          <el-checkbox :label="options[0].isRight"> {{ options[0].title }}</el-checkbox>
-          <el-checkbox :label="options[1].isRight"> {{ options[1].title }}</el-checkbox>
-          <el-checkbox :label="options[2].isRight"> {{ options[2].title }}</el-checkbox>
-          <el-checkbox :label="options[3].isRight">{{ options[3].title }}</el-checkbox>
-        </el-checkbox-group>
-        <el-col v-if="viewData.questionType==='3'">
-          <div v-html="viewData.question" />
+        <el-col
+          v-if="viewData.questionType === '2'"
+          style="margin-bottom: 15px"
+        >
+          多选题 选项：（以下选中的选项为正确答案）
         </el-col>
+        <el-checkbox-group v-if="viewData.questionType === '2'" :value="[1]">
+          <el-checkbox
+            v-for="item in options"
+            :key="item.id"
+            :label="item.isRight"
+          >
+            {{ item.title }}</el-checkbox>
+        </el-checkbox-group>
       </el-row>
       <el-divider />
       <el-row>
@@ -317,7 +345,7 @@ export default {
       isShowVideo: false,
       visible: false,
       viewData: {},
-      subjectName: '',
+      subjectName: null,
       subjectList: [],
       creatorList: [],
       provinceList: [],
@@ -406,18 +434,18 @@ export default {
       this.questionSearchData = {
         page: 1, // 当前页数
         pagesize: 10, // 页尺寸
-        subjectID: '', // 学科
-        difficulty: '', // 难度
-        questionType: '', // 试题类型
-        tags: '', // 标签名称
-        province: '', // 企业所在地省份
-        city: '', // 企业所在城市
-        keyword: '', // 关键字
-        remarks: '', // 题目备注
-        shortName: '', // 企业简称
-        direction: '', // 方向
-        creatorID: '', // 录入人
-        catalogID: '' // 目录
+        subjectID: null, // 学科
+        difficulty: null, // 难度
+        questionType: null, // 试题类型
+        tags: null, // 标签名称
+        province: null, // 企业所在地省份
+        city: null, // 企业所在城市
+        keyword: null, // 关键字
+        remarks: null, // 题目备注
+        shortName: null, // 企业简称
+        direction: null, // 方向
+        creatorID: null, // 录入人
+        catalogID: null // 目录
       }
       this.getQuestions()
     },
