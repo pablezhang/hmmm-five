@@ -16,7 +16,7 @@
         </el-col>
         <el-col :span="6" style="display: flex; justify-content: end">
           <el-button style="margin-left: 200px" type="success" @click="visible=true">
-            <i class="el-icon-edit" />新增技巧</el-button>
+            <i class="el-icon-edit" style="margin-right: 10px" />新增技巧</el-button>
         </el-col>
       </el-row>
       <el-row style="margin: 10px 0">
@@ -66,7 +66,7 @@
       </el-row>
     </el-card>
     <!-- 编辑 -->
-    <el-dialog class="el_add" :visible.sync="visible" title="新增文章">
+    <el-dialog class="el_add" :visible.sync="visible" :title="formData.id?'修改文章':'新增文章'">
       <el-form ref="form" label-width="100px" :model="formData" :rules="rules">
         <el-form-item label="文章标题" prop="title">
           <el-input v-model="formData.title" placeholder="请输入文章标题" />
@@ -100,7 +100,6 @@
       </el-row>
       <p class="p_text" v-html="detail.articleBody" />
     </el-dialog>
-
   </div>
 </template>
 <script>
@@ -158,6 +157,7 @@ export default {
     visible(newValue) {
       if (!newValue) {
         this.$refs.form.resetFields()
+        this.formData.id = ''
       }
     }
   },
