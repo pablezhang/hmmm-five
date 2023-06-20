@@ -81,5 +81,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+::v-deep .el-dialog {
+    border-radius: 10px;
+}
+::v-deep .el-dialog__header {
+    padding: 20px 20px 10px;
+    background: #409eff;
+    border-radius: 9px 9px 0 0;
+}
+::v-deep .el-dialog__header .el-dialog__title {
+    color: #fff;
+}
+::v-deep .el-icon-close:before {
+    content: "\e6db";
+    color: #fff;
+}
 </style>
