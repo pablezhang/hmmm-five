@@ -254,6 +254,9 @@
           <el-checkbox :label="options[2].isRight"> {{ options[2].title }}</el-checkbox>
           <el-checkbox :label="options[3].isRight">{{ options[3].title }}</el-checkbox>
         </el-checkbox-group>
+        <el-col v-if="viewData.questionType==='3'">
+          <div v-html="viewData.question" />
+        </el-col>
       </el-row>
       <el-divider />
       <el-row>
@@ -296,18 +299,18 @@ export default {
       questionSearchData: {
         page: 1, // 当前页数
         pagesize: 10, // 页尺寸
-        subjectID: '', // 学科
-        difficulty: '', // 难度
-        questionType: '', // 试题类型
-        tags: '', // 标签名称
-        province: '', // 企业所在地省份
-        city: '', // 企业所在城市
-        keyword: '', // 关键字
-        remarks: '', // 题目备注
-        shortName: '', // 企业简称
-        direction: '', // 方向
-        creatorID: '', // 录入人
-        catalogID: '' // 目录
+        subjectID: null, // 学科
+        difficulty: null, // 难度
+        questionType: null, // 试题类型
+        tags: null, // 标签名称
+        province: null, // 企业所在地省份
+        city: null, // 企业所在城市
+        keyword: null, // 关键字
+        remarks: null, // 题目备注
+        shortName: null, // 企业简称
+        direction: null, // 方向
+        creatorID: null, // 录入人
+        catalogID: null // 目录
       },
       total: 0,
       tableList: [],
@@ -358,10 +361,10 @@ export default {
     async onView(row) {
       this.visible = true
       const res = await gerQuestionsViewAPI(row.id)
-      // console.log(res)
+      console.log(res)
       this.viewData = res
       this.options = res.options
-      console.log(this.options)
+      // console.log(this.options)
     },
     async onDelete(row) {
       this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
