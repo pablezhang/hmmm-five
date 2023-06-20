@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request, { requestTwo } from '@/utils/request'
 
 export const gerQuestionsAPI = (data) => {
   return request({
@@ -20,9 +20,37 @@ export const gerQuestionsViewAPI = (id) => {
   })
 }
 
+export const addChoiceAPI = ({ id, choiceState }) => {
+  return request({
+    method: 'patch',
+    url: `/questions/choice/${id}/${choiceState}`
+
+  })
+}
+
 export const getSubjectsAPI = (data) => {
   return request({
     url: ' /subjects/simple',
     data
+  })
+}
+
+export const getCreatorAPI = (data) => {
+  return request({
+    url: ' /users/simple',
+    data
+  })
+}
+
+export const getProvinceAPI = () => {
+  return requestTwo({
+    url: '/api/province'
+  })
+}
+
+export const getCityAPI = (params) => {
+  return requestTwo({
+    url: '/api/city',
+    params
   })
 }
