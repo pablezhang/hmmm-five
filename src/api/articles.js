@@ -15,3 +15,11 @@ export const delArticlesAPI = (id) => {
 export const stateArticlesAPI = (data) => {
   return request({ url: '/articles/' + data.id + '/' + data.state, method: 'post', data })
 }
+
+export const detailsArticlesAPI = (id) => {
+  return request({ url: `/articles/${id}` })
+}
+
+export const editArticlesAPI = (data) => {
+  return request({ url: `/articles/${data.id}`, method: 'put', data })
+}
