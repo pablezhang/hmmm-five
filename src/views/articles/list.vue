@@ -3,9 +3,9 @@
     <el-card class="card">
       <el-row>
         <el-col class="search" :span="6">关键字
-          <el-input v-model="title" placeholder="根据文章标题搜索" /></el-col>
+          <el-input v-model="pageParams.keyword" placeholder="根据文章标题搜索" /></el-col>
         <el-col class="search" :span="6">状态
-          <el-select v-model="select" style="margin-left: 10px" placeholder="请选择">
+          <el-select v-model="pageParams.state" style="margin-left: 10px" placeholder="请选择">
             <el-option label="启用" value="1" />
             <el-option label="禁用" value="0" />
           </el-select>
@@ -20,7 +20,7 @@
         </el-col>
       </el-row>
       <el-row style="margin: 10px 0">
-        <el-alert :title="'数据一共有' + total + '条'" type="info" show-icon />
+        <el-alert :title="'数据一共有' + pageParams.total + '条'" type="info" show-icon />
       </el-row>
       <el-table :data="tableList">
         <el-table-column align="center" label="序号" width="80px">
@@ -60,7 +60,7 @@
           :page-sizes="[10, 20, 40, 50]"
           :page-size="pageParams.pagesize"
           layout="prev, pager, next, jumper"
-          :total="total"
+          :total="pageParams.total"
           @current-change="onChange"
         />
       </el-row>
@@ -117,8 +117,6 @@ export default {
       visible: false,
       disabled: true,
       previewVisible: false,
-      select: '',
-      title: '',
       tableList: [],
       detail: {
         title: '',
@@ -127,10 +125,12 @@ export default {
         username: '',
         visits: ''
       },
-      total: 1000,
       pageParams: {
         page: 1,
-        pagesize: 10
+        pagesize: 10,
+        total: 100,
+        state: '',
+        keyword: ''
       },
       formData: {
         title: '',
@@ -164,9 +164,9 @@ export default {
   },
   methods: {
     async  getArticles() {
-      const res = await getArticlesAPI({ ...this.pageParams, keyword: this.title, state: this.select })
+      const res = await getArticlesAPI(this.pageParams)
       this.tableList = res.items
-      this.total = res.counts
+      this.pageParams.total = res.counts
     },
     onChange(page) {
       this.pageParams.page = page
@@ -213,8 +213,8 @@ export default {
       this.getArticles()
     },
     onClear() {
-      this.select = ''
-      this.title = ''
+      this.pageParams.keyword = ''
+      this.pageParams.state = ''
       this.getArticles()
     }
   }
