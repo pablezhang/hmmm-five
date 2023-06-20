@@ -5,7 +5,7 @@ import router from '@/router'
 import store from '@/store'
 
 const request = axios.create({
-  timeout: 5000
+  timeout: 10000
 })
 
 export const requestTwo = axios.create({
