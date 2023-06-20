@@ -148,7 +148,7 @@
             </el-col>
             <el-col :span="6">
               <el-row type="flex" justify="end">
-                <el-button size="small">清除</el-button>
+                <el-button size="small" @click="onClean">清除</el-button>
                 <el-button size="small" type="primary" @click="onSearch">搜素</el-button>
               </el-row>
             </el-col>
@@ -161,7 +161,7 @@
               <span style="margin-left: 8px">数据一共{{ total }}条</span>
             </div>
             <el-table style="margin-top: 20px" :data="tableData">
-              <el-table-column prop="number" label="试题编号" />
+              <el-table-column prop="number" label="试题编号" width="220px" />
               <el-table-column prop="subjectID" label="学科" />
               <el-table-column prop="catalogID" label="目录" />
               <el-table-column prop="questionType" label="题型">
@@ -169,7 +169,7 @@
                   <span>{{ row.questionType === "1" ? "单选" : "多选" }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="question" label="题干" width="500px">
+              <el-table-column prop="question" label="题干" width="260px">
                 <template #default="{ row }">
                   <span v-html="row.question" />
                 </template>
@@ -194,13 +194,19 @@
               <el-table-column prop="chkState" label="审核状态">
                 <template #default="{ row }">
                   <span v-if="row.chkState === 0">待审核</span>
-                  <span v-else-if="row.chkState === 1">通过</span>
-                  <span v-else>拒绝</span>
+                  <span v-else-if="row.chkState === 1">已审核</span>
+                  <span v-else>已拒绝</span>
                 </template>
               </el-table-column>
               <el-table-column prop="chkRemarks" label="审核意见" />
               <el-table-column prop="chkUser" label="审核人" />
-              <el-table-column prop="chkState" label="发布状态" />
+              <el-table-column prop="chkState" label="发布状态">
+                <template #default="{row}">
+                  <span v-if="row.chkState === 0">待发布</span>
+                  <span v-else-if="row.chkState === 1">已发布</span>
+                  <span v-else>已下架</span>
+                </template>
+              </el-table-column>
               <el-table-column
                 label="操作"
                 prop="operate"
@@ -223,16 +229,20 @@
                   <el-button
                     type="text"
                     style="font-size: 12px"
-                    @click="$router.push('/questions/new')"
+                    :disabled="row.publishState === 0"
+                    @click="$router.push(`/questions/new/${row.id}`)"
                   >修改</el-button>
                   <el-button
                     type="text"
                     style="font-size: 12px"
+                    :disabled="row.publishState === 0"
                     @click="onPublishState(row.id)"
-                  >下架</el-button>
+                  >{{ row.publishState===0?'下架':'上架' }}</el-button>
                   <el-button
                     type="text"
                     style="font-size: 12px"
+                    :disabled="row.publishState === 0"
+                    @click="getDelete(row.id)"
                   >删除</el-button>
                 </template>
               </el-table-column>
@@ -241,7 +251,7 @@
               <el-pagination
                 background
                 :current-page="params.page"
-                :page-sizes="[10, 20, 30, 40]"
+                :page-sizes="[5, 10, 15, 20]"
                 :page-size="params.pagesize"
                 layout=" sizes, prev, pager, next, jumper"
                 :total="total"
@@ -261,7 +271,7 @@
           }}</span>
         </el-col>
         <el-col :span="6">
-          <span>【题号】：{{ oneDiaList.options?.questionsID }}</span>
+          <span>【题号】：{{ oneDiaList.id }}</span>
         </el-col>
         <el-col :span="6">
           <span v-if="oneDiaList.difficulty === '1'">【难度】：简单</span>
@@ -269,7 +279,7 @@
           <span v-else>【难度】：困难</span>
         </el-col>
         <el-col :span="6">
-          <span>【标签】：</span>
+          <span>【标签】：{{ oneDiaList.tags }}</span>
         </el-col>
       </el-row>
       <el-row type="flex" style="margin-top: 20px">
@@ -283,17 +293,17 @@
           <span>【方向】：{{ oneDiaList.direction }}</span>
         </el-col>
       </el-row>
-      <hr>
+      <el-divider />
       <el-row>
         <span>【题干】：</span>
       </el-row>
       <el-row>
         <span v-html="oneDiaList.question" />
       </el-row>
-      <el-row style="margin-top: 20px">
-        <span>单选题 选项：（以下选中的选项为正确答案）</span>
+      <el-row>
+        <span>{{ oneDiaList.questionType==='1'?'单选':'多选' }}题 选项：（以下选中的选项为正确答案）</span>
       </el-row>
-      <el-radio-group :value="isRight">
+      <el-radio-group v-if="oneDiaList.questionType==='1'" :value="isRight">
         <el-row
           v-for="item in oneDiaList.options"
           :key="item.id"
@@ -302,17 +312,33 @@
           <el-radio :label="item.isRight">{{ item.title }}</el-radio>
         </el-row>
       </el-radio-group>
-      <hr>
+      <el-checkbox-group v-else :value="isRightTwo">
+        <el-row
+          v-for="item in oneDiaList.options"
+          :key="item.id"
+          style="margin-top: 20px"
+        >
+          <el-checkbox :label="item.isRight">{{ item.title }}</el-checkbox>
+        </el-row>
+      </el-checkbox-group>
+      <el-divider />
       <el-row>
         <span>【参考答案】：<el-button
           type="danger"
           size="small"
+          @click="showVideo=true"
         >视频答案预览</el-button></span>
+        <el-col v-if="showVideo">
+          <video :src="oneDiaList.videoURL" controls />
+        </el-col>
       </el-row>
-      <hr>
-      <span>【答案解析】：<span v-html="oneDiaList.answer" /></span>
-      <hr>
-      <el-row style="margin-top: 20px">
+      <el-divider />
+      <el-row type="flex" style="height:20px">
+        【答案解析】：
+        <div style="display:flex" v-html="oneDiaList.answer" />
+      </el-row>
+      <el-divider />
+      <el-row>
         <span>【题目备注】：{{ oneDiaList.remarks }}</span>
       </el-row>
       <el-row type="flex" style="margin-top: 20px" justify="end">
@@ -359,6 +385,7 @@ import {
   getDirectorysAPI,
   getQuestionsCheckAPI,
   getQuestionsChoiceAPI,
+  getQuestionsDeleteAPI,
   getQuestionsIdAPI,
   getSubjectsSimpleAPI,
   getTagsAPI,
@@ -374,7 +401,7 @@ export default {
       total: 1,
       params: {
         page: 1,
-        pagesize: 10,
+        pagesize: 5,
         subjectID: null,
         catalogID: null,
         tags: null,
@@ -386,7 +413,8 @@ export default {
         remarks: null,
         shortName: null,
         province: null,
-        city: null
+        city: null,
+        chkState: null
       },
       tableData: [],
       selectList: [],
@@ -416,8 +444,10 @@ export default {
       cityList: [],
       oneDia: false,
       isRight: 1,
+      isRightTwo: [1],
       oneDiaList: {},
       twoDia: false,
+      showVideo: false,
       CheckData: { chkState: '', chkRemarks: '', id: '' },
       publishStateData: { id: '', publishState: 0 },
       rules: {
@@ -462,6 +492,17 @@ export default {
     },
     // 标签页切换
     onTab(xxx) {
+      if (xxx.label === '全部') {
+        this.params.chkState = null
+      } else if (xxx.label === '待审核') {
+        this.params.chkState = 0
+      } else if (xxx.label === '已审核') {
+        this.params.chkState = 1
+      } else {
+        this.params.chkState = 2
+      }
+      this.params.page = 1
+      this.getQuestionsChoice()
       console.log(xxx.label)
     },
     // 学科选中值变化
@@ -491,9 +532,9 @@ export default {
       this.getQuestionsChoice()
       this.twoDia = false
     },
-    // 下架
+    // 下架和删除
     onPublishState(xxx) {
-      this.publishStateData.id = xxx
+      this.publishStateData = { id: xxx, publishState: 0 }
       this.$confirm('您确定下架这道题目吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -514,8 +555,52 @@ export default {
         })
       this.getQuestionsChoice()
     },
+    // 删除
+    getDelete(xxx) {
+      this.publishStateData = { id: xxx }
+      this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          await getQuestionsDeleteAPI(this.publishStateData)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      this.getQuestionsChoice()
+    },
     // 搜素
     onSearch() {
+      this.getQuestionsChoice()
+    },
+    // 重置
+    onClean() {
+      this.params = {
+        page: 1,
+        pagesize: 5,
+        subjectID: null,
+        catalogID: null,
+        tags: null,
+        keyword: null,
+        questionType: null,
+        difficulty: null,
+        direction: null,
+        creatorID: null,
+        remarks: null,
+        shortName: null,
+        province: null,
+        city: null,
+        chkState: null
+      }
       this.getQuestionsChoice()
     }
   }
@@ -524,7 +609,7 @@ export default {
 
 <style lang="scss" scoped>
 .item {
-  padding: 18px 0;
+  padding: 10px 0;
 }
 .box-card {
   width: 1290px;
@@ -544,7 +629,7 @@ export default {
   font-size: 16px;
 }
 .item {
-  padding: 18px 0;
+  padding: 10px 0;
 }
 
 .dia-card {

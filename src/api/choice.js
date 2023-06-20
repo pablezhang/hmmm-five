@@ -24,4 +24,4 @@ export const getQuestionsCheckAPI = (data) => { return request({ url: ` /questio
 export const getChoicePublishStateAPI = (data) => { return request({ url: ` /questions/choice/${data.id}/${data.publishState}`, method: 'POST' }) }
 
 // 题库删除
-export const getQuestionsDeleteAPI = (id) => { return request({ url: `/questions/${id}`, method: 'DELETE' }) }
+export const getQuestionsDeleteAPI = (data) => { return request({ url: `/questions/${data.id}`, method: 'DELETE' }) }
