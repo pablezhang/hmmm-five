@@ -12,8 +12,8 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button size="small" type="primary">搜索</el-button>
-            <el-button size="small">清除</el-button>
+            <el-button size="small" type="primary" @click="search()">搜索</el-button>
+            <el-button size="small" @click="clear">清除</el-button>
           </el-form-item>
         </el-form>
         <div>
@@ -94,11 +94,9 @@ export default {
     async  onLoad(params) {
       const res = await getSubjectListAPI(params)
       this.tableData = res.items
-      console.log(res)
       this.counts = res.counts
       this.pageList.pages = res.pages
       this.pageList.pageSize = res.pageSize
-      console.log(res.counts)
     },
     async edit(id) {
       await this.$refs.editDialog.edit(id)
@@ -115,6 +113,12 @@ export default {
         await this.onLoad()
         this.$message.success('删除成功')
       })
+    },
+    clear() {
+      this.form.subjectName = ''
+    },
+    async search() {
+      await this.onLoad({ subjectName: this.form.subjectName })
     }
   }
 }
