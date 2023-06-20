@@ -229,19 +229,18 @@
                   <el-button
                     type="text"
                     style="font-size: 12px"
-                    :disabled="row.publishState === 0"
+                    :disabled="row.publishState === 1"
                     @click="$router.push(`/questions/new/${row.id}`)"
                   >修改</el-button>
                   <el-button
                     type="text"
                     style="font-size: 12px"
-                    :disabled="row.publishState === 0"
-                    @click="onPublishState(row.id)"
-                  >{{ row.publishState===0?'下架':'上架' }}</el-button>
+                    @click="onPublishState(row.id,row.publishState)"
+                  >{{ row.publishState===1?'下架':'上架' }}</el-button>
                   <el-button
                     type="text"
                     style="font-size: 12px"
-                    :disabled="row.publishState === 0"
+                    :disabled="row.publishState === 1"
                     @click="getDelete(row.id)"
                   >删除</el-button>
                 </template>
@@ -346,7 +345,7 @@
           <el-button
             type="primary"
             size="small"
-            @click="oneDiaList = false"
+            @click="oneDia = false"
           >关闭</el-button>
         </el-col>
       </el-row>
@@ -368,7 +367,7 @@
         </el-form-item>
       </el-form>
       <el-row type="flex" justify="end" style="margin-top: 40px">
-        <el-button size="small">取消</el-button>
+        <el-button size="small" @click="twoDia=false">取消</el-button>
         <el-button
           size="small"
           type="primary"
@@ -449,7 +448,7 @@ export default {
       twoDia: false,
       showVideo: false,
       CheckData: { chkState: '', chkRemarks: '', id: '' },
-      publishStateData: { id: '', publishState: 0 },
+      publishStateData: { id: '', publishState: '' },
       rules: {
         chkRemarks: [
           { required: true, message: '意见不能为空', trigger: 'blur' }
@@ -533,9 +532,9 @@ export default {
       this.twoDia = false
     },
     // 下架和删除
-    onPublishState(xxx) {
-      this.publishStateData = { id: xxx, publishState: 0 }
-      this.$confirm('您确定下架这道题目吗?', '提示', {
+    onPublishState(a, b) {
+      this.publishStateData = { id: a, publishState: b === 1 ? '0' : '1' }
+      this.$confirm(b === 1 ? '您确定下架这道题目吗?' : '您确定上架这道题目吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -544,16 +543,16 @@ export default {
           await getChoicePublishStateAPI(this.publishStateData)
           this.$message({
             type: 'success',
-            message: '下架成功!'
+            message: b === 0 ? '下架成功!' : '上架成功'
           })
+          this.getQuestionsChoice()
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消下架'
+            message: b === 0 ? '已取消下架' : '已取消上架'
           })
         })
-      this.getQuestionsChoice()
     },
     // 删除
     getDelete(xxx) {
@@ -569,6 +568,7 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
+          this.getQuestionsChoice()
         })
         .catch(() => {
           this.$message({
@@ -576,7 +576,6 @@ export default {
             message: '已取消删除'
           })
         })
-      this.getQuestionsChoice()
     },
     // 搜素
     onSearch() {
