@@ -284,7 +284,7 @@ export default {
   height: 360px;
   .p_text{
     padding: 10px;
-    width: 520px;
+    width: 100%;
     background: #f5f5f5;
   }
 }
