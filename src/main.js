@@ -13,6 +13,8 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+// import './mock/index'
+
 // set ElementUI lang to EN
 Vue.use(ElementUI)
 // 如果想要中文版 element-ui，按如下方式声明

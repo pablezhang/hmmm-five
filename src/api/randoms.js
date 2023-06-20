@@ -1,7 +1,6 @@
+
 import request from '@/utils/request'
 
-export const getQuestionListAPI = () => {
-  return request({
-    url: '/questions/randoms'
-  })
+export const getRandomAPI = (params) => {
+  return request({ url: '/api/users', method: 'get', params })
 }
