@@ -8,7 +8,7 @@ const request = axios.create({
   timeout: 5000
 })
 
-const requestTwo = axios.create({
+export const requestTwo = axios.create({
   baseURL: 'http://hmajax.itheima.net/',
   timeout: 5000
 })
@@ -61,6 +61,3 @@ requestTwo.interceptors.response.use(function(response) {
 
 export default request
 
-export {
-  requestTwo
-}

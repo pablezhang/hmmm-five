@@ -24,7 +24,7 @@ const questionsRouter = {
       meta: { title: '精选题库', noCache: true }
     },
     {
-      path: 'new',
+      path: 'new/:id?',
       component: () => import('@/views/questions/new'),
       name: '试题录入',
       meta: { title: '试题录入', noCache: true }
