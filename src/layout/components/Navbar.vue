@@ -61,20 +61,19 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
+  height: 70px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background: #0aadfa;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 
   .hamburger-container {
-    line-height: 46px;
+    line-height: 70px;
     height: 100%;
     float: left;
     cursor: pointer;
     transition: background .3s;
     -webkit-tap-highlight-color:transparent;
-
     &:hover {
       background: rgba(0, 0, 0, .025)
     }
@@ -82,12 +81,19 @@ export default {
 
   .breadcrumb-container {
     float: left;
+    height: 70px;
+    line-height: 70px;
+
+    ::v-deep .no-redirect{
+      font-size: 14px;
+      color: #fff;
+    }
   }
 
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 70px;
 
     &:focus {
       outline: none;
