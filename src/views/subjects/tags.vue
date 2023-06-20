@@ -25,9 +25,9 @@
         <el-table-column align="center" prop="subjectName" label="所属学科" />
         <el-table-column align="center" prop="username" label="创建者" />
         <el-table-column align="center" prop="addDate" label="创建日期">
-          <!-- <template #default="{row}">
-            {{ row.addDate }}
-          </template> -->
+          <template #default="{row}">
+            {{ new Date(row.addDate).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
+          </template>
         </el-table-column>
         <el-table-column align="center" prop="state" label="状态">
           <template #default="{row}">
@@ -55,16 +55,16 @@
         />
       </el-row>
     </div>
-    <dire-dialog ref="dialog" :visible.sync="visible" @updateTable="renderTable()" />
+    <tag-dialog ref="dialog" :visible.sync="visible" @updateTable="renderTable()" />
   </div>
 </template>
 
 <script>
 import { getCatalogDetailAPI, updateStatusAPI } from '@/api/directorys'
-import DireDialog from './components/DireDialog.vue'
 import { delTagsAPI, getTagsListAPI } from '@/api/tags'
+import TagDialog from './components/tag-dialog.vue'
 export default {
-  components: { DireDialog },
+  components: { TagDialog },
   data() {
     return {
       tableList: [], // 表格渲染数组
