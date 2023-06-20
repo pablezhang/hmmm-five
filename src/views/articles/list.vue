@@ -57,10 +57,11 @@
       <el-row type="flex" justify="end">
         <el-pagination
           background
-          :page-sizes="[10, 20, 40, 50]"
+          :page-sizes="[5, 10, 20, 50]"
           :page-size="pageParams.pagesize"
-          layout="prev, pager, next, jumper"
+          layout="total,prev, pager, next,sizes,jumper"
           :total="pageParams.total"
+          @size-change="onSize"
           @current-change="onChange"
         />
       </el-row>
@@ -165,7 +166,7 @@ export default {
     this.getArticles()
   },
   methods: {
-    async  getArticles() {
+    async getArticles() {
       const res = await getArticlesAPI(this.pageParams)
       this.tableList = res.items
       this.pageParams.total = res.counts
@@ -173,6 +174,10 @@ export default {
     onChange(page) {
       this.pageParams.page = page
       this.getArticles(this.pageParams)
+    },
+    onSize(value) {
+      this.pageParams.pagesize = value
+      this.getArticles()
     },
     async onOpen(id, state) {
       await stateArticlesAPI({ id, state })
@@ -196,7 +201,7 @@ export default {
       this.getArticles()
     },
     onDel(id) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -204,9 +209,7 @@ export default {
         await delArticlesAPI(id)
         this.$message({ type: 'success', message: '删除成功!' })
         this.getArticles()
-      }).catch(() => {
-        this.$message({ type: 'success', message: '已取消删除' })
-      })
+      }).catch(() => {})
     },
     async onPreview(id) {
       this.previewVisible = true
