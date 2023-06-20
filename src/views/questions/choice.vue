@@ -147,7 +147,7 @@
               <el-table-column label="操作" prop="operate" width="200px" fixed="right" align="center">
                 <template #default="{row}">
                   <el-button type="text" style="font-size: 12px" @click="getQuestionsId(row.id)">预览</el-button>
-                  <el-button type="text" :disabled="row.chkState===1" style="font-size: 12px" @click="getQuestionsCheck(row.id)">审核</el-button>
+                  <el-button type="text" :disabled="row.chkState===1" style="font-size: 12px" @click="getTwoDia(row.id)">审核</el-button>
                   <el-button type="text" style="font-size: 12px">修改</el-button>
                   <el-button type="text" style="font-size: 12px">上架</el-button>
                   <el-button type="text" style="font-size: 12px">删除</el-button>
@@ -160,7 +160,7 @@
                 :current-page="params.page"
                 :page-sizes="[10, 20, 30, 40]"
                 :page-size="params.pagesize"
-                layout="total, sizes, prev, pager, next, jumper"
+                layout=" sizes, prev, pager, next, jumper"
                 :total="total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -231,10 +231,10 @@
     </el-dialog>
     <el-dialog title="题目审核" :visible.sync="twoDia" width="25%">
       <el-row>
-        <el-radio>通过</el-radio>
-        <el-radio>拒绝</el-radio>
+        <el-radio v-model="CheckData.chkState" label="1">通过</el-radio>
+        <el-radio v-model="CheckData.chkState" label="2">拒绝</el-radio>
       </el-row>
-      <el-form :model="CheckData">
+      <el-form :model="CheckData" :rules="rules">
         <el-form-item prop="chkRemarks">
           <el-row style="margin-top:20px">
             <el-input v-model="CheckData.chkRemarks" type="textarea" placeholder="请输入审核意见" />
@@ -243,7 +243,7 @@
       </el-form>
       <el-row type="flex" justify="end" style="margin-top:40px">
         <el-button size="small">取消</el-button>
-        <el-button size="small" type="primary">确认</el-button>
+        <el-button size="small" type="primary" @click="getQuestionsCheck">确认</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -251,6 +251,7 @@
 
 <script>
 import { getDirectorysAPI, getQuestionsCheckAPI, getQuestionsChoiceAPI, getQuestionsIdAPI, getSubjectsSimpleAPI, getTagsAPI, getUsersSimpleAPI } from '@/api/choice'
+import { Message } from 'element-ui'
 export default {
   data() {
     return {
@@ -273,7 +274,10 @@ export default {
       fromData: {
         subjectID: ''
       },
-      CheckData: { chkState: '', chkRemarks: '' }
+      CheckData: { chkState: '', chkRemarks: '', id: '' },
+      rules: {
+        chkRemarks: [{ required: true, message: '意见不能为空', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -319,10 +323,16 @@ export default {
       console.log(res)
       this.oneDia = true
     },
-    // 审核
-    async getQuestionsCheck(xxx) {
+    // 审核模态框
+    async getTwoDia(xxx) {
       this.twoDia = true
-      console.log(xxx)
+      this.CheckData.id = xxx
+    },
+    async getQuestionsCheck() {
+      this.CheckData.chkState = +this.CheckData.chkState
+      await getQuestionsCheckAPI(this.CheckData)
+      Message.success('审核成功')
+      this.twoDia = false
     }
   }
 }

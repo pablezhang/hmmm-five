@@ -18,4 +18,4 @@ export const getUsersSimpleAPI = (params) => { return request({ url: '/users/sim
 export const getQuestionsIdAPI = (id) => { return request({ url: `/questions/${id}`, method: 'get' }) }
 
 // 试题审核
-export const getQuestionsCheckAPI = (data) => { return request({ url: ` /questions/check/${data.id}`, method: 'get', data }) }
+export const getQuestionsCheckAPI = (data) => { return request({ url: ` /questions/check/${data.id}`, method: 'POST', data }) }
