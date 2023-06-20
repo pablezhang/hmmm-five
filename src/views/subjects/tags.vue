@@ -60,9 +60,9 @@
 </template>
 
 <script>
-import { delCatalogAPI, getCatalogDetailAPI, updateStatusAPI } from '@/api/directorys'
+import { getCatalogDetailAPI, updateStatusAPI } from '@/api/directorys'
 import DireDialog from './components/DireDialog.vue'
-import { getTagsListAPI } from '@/api/tags'
+import { delTagsAPI, getTagsListAPI } from '@/api/tags'
 export default {
   components: { DireDialog },
   data() {
@@ -81,11 +81,11 @@ export default {
     }
   },
   created() {
-    this.renderTable(this.reqParameter)
+    this.renderTable()
   },
   methods: {
-    async renderTable(params) {
-      const res = await getTagsListAPI(params)
+    async renderTable() {
+      const res = await getTagsListAPI(this.reqParameter)
       console.log('res  ----->  ', res)
       this.tableList = res.items
       this.counts = res.counts
@@ -129,15 +129,18 @@ export default {
       this.renderTable(this.reqParameter)
     },
     // 删除目录
-    async delData(id) {
-      await this.$confirm('即将永久删除该目录,是否继续?', '提示', {
+    delData(id) {
+      this.$confirm('即将永久删除该标签,是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(async() => {
+        await delTagsAPI(id)
+        this.$message.success('已删除该目录')
+        this.renderTable()
+      }).catch(() => {
+        this.$message.info('已取消删除')
       })
-      await delCatalogAPI(id)
-      this.$message.success('已删除该目录')
-      this.renderTable(this.reqParameter)
     }
   }
 }
