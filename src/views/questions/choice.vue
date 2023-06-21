@@ -462,7 +462,6 @@ export default {
   },
   methods: {
     async getQuestionsChoice() {
-      console.log(await getQuestionsChoiceAPI(this.params))
       const { items, counts } = await getQuestionsChoiceAPI(this.params)
       this.selectList = await getSubjectsSimpleAPI()
       this.tableData = items
@@ -501,7 +500,6 @@ export default {
       }
       this.params.page = 1
       this.getQuestionsChoice()
-      console.log(xxx.label)
     },
     // 学科选中值变化
     async changeSubjectID(xxx) {
@@ -509,13 +507,10 @@ export default {
       const res = await getTagsAPI({ subjectID: xxx })
       this.tagsList = res.items
       this.directoryList = items
-      console.log(items)
     },
     async getQuestionsId(xxx) {
-      console.log(xxx)
       const res = await getQuestionsIdAPI(xxx)
       this.oneDiaList = res
-      console.log(res)
       this.oneDia = true
     },
     // 审核模态框
