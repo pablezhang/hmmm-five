@@ -3,19 +3,19 @@
     <el-card class="card">
       <el-row>
         <el-col class="search" :span="6">关键字
-          <el-input v-model="keyword" placeholder="根据文章标题搜索" /></el-col>
+          <el-input v-model="keyword" size="small" placeholder="根据文章标题搜索" /></el-col>
         <el-col class="search" :span="6">状态
-          <el-select v-model="state" style="margin-left: 10px" placeholder="请选择">
+          <el-select v-model="state" size="small" style="margin-left: 10px" placeholder="请选择">
             <el-option label="启用" value="1" />
             <el-option label="禁用" value="0" />
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-button @click="onClear">清除</el-button>
-          <el-button type="primary" @click="onSearch">搜索</el-button>
+          <el-button size="small" @click="onClear">清除</el-button>
+          <el-button type="primary" size="small" @click="onSearch">搜索</el-button>
         </el-col>
         <el-col :span="6" style="display: flex; justify-content: end">
-          <el-button style="margin-left: 200px" type="success" @click="visible=true">
+          <el-button style="margin-left: 200px" type="success" size="small" @click="visible=true">
             <i class="el-icon-edit" style="margin-right: 10px" />新增技巧</el-button>
         </el-col>
       </el-row>

@@ -205,7 +205,9 @@ export default {
 
   async created() {
     this.loadData()
-    if (this.$route.params.id) {
+    console.log('this.$route.params.id  ----->  ', this.$route.params.id)
+    if (+this.$route.params.id) {
+      console.log('  ----->  ', +this.$route.params.id)
       const res = await detailQuestionsAPI({ id: this.$route.params.id, isNext: true })
       this.questionData = res
     }
