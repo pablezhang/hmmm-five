@@ -331,9 +331,9 @@
         </el-col>
       </el-row>
       <el-divider />
-      <el-row type="flex" style="height:20px">
+      <el-row type="flex" style="height:20px" align="middle">
         【答案解析】：
-        <div style="display:flex" v-html="oneDiaList.answer" />
+        <div v-html="oneDiaList.answer" />
       </el-row>
       <el-divider />
       <el-row>
@@ -354,7 +354,7 @@
         <el-radio v-model="CheckData.chkState" label="1">通过</el-radio>
         <el-radio v-model="CheckData.chkState" label="2">拒绝</el-radio>
       </el-row>
-      <el-form :model="CheckData" :rules="rules">
+      <el-form ref="CheckForm" :model="CheckData" :rules="rules">
         <el-form-item prop="chkRemarks">
           <el-row style="margin-top: 20px">
             <el-input
@@ -519,6 +519,7 @@ export default {
       this.CheckData.id = xxx
     },
     async getQuestionsCheck() {
+      await this.$refs.CheckForm.validate()
       this.CheckData.chkState = +this.CheckData.chkState
       await getQuestionsCheckAPI(this.CheckData)
       Message.success('审核成功')
@@ -604,9 +605,6 @@ export default {
 .item {
   padding: 10px 0;
 }
-.box-card {
-  width: 1270px;
-}
 .widthBtn {
   width: 240px !important;
 }
@@ -624,10 +622,6 @@ export default {
 .item {
   padding: 10px 0;
 }
-
-// .dia-card {
-//   // width: 100%;
-// }
 ::v-deep .el-dialog {
   border-radius: 10px;
 }

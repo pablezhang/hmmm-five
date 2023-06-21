@@ -5,7 +5,7 @@
         <el-form label-width="80px">
           <el-row type="flex">
             <el-form-item label="标签名称">
-              <el-input v-model.trim="reqParameter.directoryName" size="small" />
+              <el-input v-model.trim="reqParameter.tagName" size="small" />
             </el-form-item>
             <el-form-item label="状态">
               <el-select v-model="reqParameter.state" size="small">
@@ -23,6 +23,7 @@
       <el-table :data="tableList" class="table" :header-cell-style="{background:'#fafafa'}">
         <el-table-column align="center" type="index" label="序号" />
         <el-table-column align="center" prop="subjectName" label="所属学科" />
+        <el-table-column align="center" prop="tagName" label="标签名称" />
         <el-table-column align="center" prop="username" label="创建者" />
         <el-table-column align="center" prop="addDate" label="创建日期">
           <template #default="{row}">
@@ -50,6 +51,7 @@
           :page-size="reqParameter.pagesize"
           layout="prev, pager, next, sizes, jumper"
           :total="counts"
+          :current-page="reqParameter.page"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -72,7 +74,7 @@ export default {
         page: 1, // 当前页
         pagesize: 10, // 页尺寸
         subjectID: null, // 学科ID
-        directoryName: null, // 目录名称
+        tagName: null, // 目录名称
         state: null // 状态
       }, // 请求参数
       counts: null, // 总条目数
@@ -81,11 +83,11 @@ export default {
     }
   },
   created() {
-    this.renderTable()
+    this.renderTable(this.reqParameter)
   },
   methods: {
-    async renderTable() {
-      const res = await getTagsListAPI(this.reqParameter)
+    async renderTable(params) {
+      const res = await getTagsListAPI(params)
       this.tableList = res.items
       this.counts = res.counts
       this.pages = res.pages
@@ -101,6 +103,7 @@ export default {
     // 搜索功能
     goSearch() {
       this.renderTable(this.reqParameter)
+      this.reqParameter.page = 1
       this.$message.success('搜索成功')
     },
     // 清除搜索内容

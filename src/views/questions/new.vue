@@ -107,7 +107,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
-import { addOptionAPI, getCompanyListAPI, getSimpleSubjectListAPI } from '@/api/question-new'
+import { addOptionAPI, detailQuestionsAPI, editQuestionAPI, getCompanyListAPI, getSimpleSubjectListAPI } from '@/api/question-new'
 import { getCatalogListAPI } from '@/api/directorys'
 import { getTagsListAPI } from '@/api/tags'
 import { getCityAPI, getProvinceAPI } from '@/api/questions'
@@ -203,8 +203,12 @@ export default {
     }
   },
 
-  created() {
+  async created() {
     this.loadData()
+    if (+this.$route.params.id) {
+      const res = await detailQuestionsAPI({ id: this.$route.params.id, isNext: true })
+      this.questionData = res
+    }
   },
 
   methods: {
@@ -241,6 +245,7 @@ export default {
     onPic(code) {
       this.currentPic = code
     },
+    // 新增
     async onSubmit() {
       await this.$refs.questionData.validate()
       this.questionData.options = [...this.questionDataList]
@@ -248,10 +253,11 @@ export default {
         delete item.num
         return item
       })
-      await addOptionAPI(this.questionData)
-      Message.success('添加成功')
+      Number(this.$route.params.id) ? await editQuestionAPI(this.questionData) : await addOptionAPI(this.questionData)
+      Number(this.$route.params.id) ? Message.success('试题修改成功') : Message.success('试题添加成功')
       this.$router.push('/questions/list')
     },
+    // COS上传
     beforeAvatarUpload(file) {
       const isJPG = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'].includes(file.type)
       const isLt2M = file.size / 1024 / 1024 < 2

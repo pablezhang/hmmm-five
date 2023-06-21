@@ -21,12 +21,14 @@
           </el-form>
         </el-col>
         <el-col :span="6" style="float: right" :offset="14">
-          <el-button
-            size="small"
-            type="primary"
-            @click="search()"
-          >搜索</el-button>
-          <el-button size="small">清除</el-button>
+          <el-row type="flex">
+            <el-button
+              size="small"
+              type="primary"
+              @click="search()"
+            >搜索</el-button>
+            <el-button size="small" @click="id=null">清除</el-button>
+          </el-row>
         </el-col>
       </el-row>
       <el-alert :title="'数据一共'+pageList.pages+'条'" type="info" :closable="false" show-icon />
@@ -146,6 +148,7 @@ export default {
     async search() {
       await searchRandomAPI({ id: this.id })
       this.$message.success('搜索成功')
+      this.id = null
     },
     edit() {
       this.dialogVisible = true
