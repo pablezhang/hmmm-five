@@ -296,7 +296,7 @@
         <span>【题干】：</span>
       </el-row>
       <el-row>
-        <span v-html="oneDiaList.question" />
+        <span class="blueTst" v-html="oneDiaList.question" />
       </el-row>
       <el-row>
         <span>{{ oneDiaList.questionType==='1'?'单选':'多选' }}题 选项：（以下选中的选项为正确答案）</span>
@@ -645,5 +645,8 @@ export default {
 }
 .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover{
   box-shadow: none;
+}
+.blueTst{
+ color: blue !important
 }
 </style>
