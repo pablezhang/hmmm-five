@@ -40,12 +40,10 @@
         <el-table-column prop="totals" label="题目数量" width="130" align="center" />
         <el-table-column label="操作" align="center">
           <template #default="{row}">
-            <el-row type="flex">
-              <el-button type="text" @click="$router.push('directorys')">学科分类</el-button>
-              <el-button type="text" @click="$router.push('tags')">学科标签</el-button>
-              <el-button type="text" @click="edit(row.id)">修改</el-button>
-              <el-button type="text" @click="del(row.id)">删除</el-button>
-            </el-row>
+            <el-button type="text" @click="$router.push(`directorys?id=${row.id}&name=${row.subjectName}`)">学科分类</el-button>
+            <el-button type="text" @click="$router.push(`tags?id=${row.id}&name=${row.subjectName}`)">学科标签</el-button>
+            <el-button type="text" @click="edit(row.id)">修改</el-button>
+            <el-button type="text" @click="del(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
