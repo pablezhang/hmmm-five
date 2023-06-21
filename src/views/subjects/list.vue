@@ -25,22 +25,22 @@
       <el-alert :title="'数据一共'+counts+'条'" type="info" :closable="false" show-icon style="margin-bottom:15px" />
       <el-table :data="tableData" style="width: 100% " :header-cell-style="{background:'#fafafa' }">
         <el-table-column type="index" label="序号" width="80" align="center" />
-        <el-table-column prop="subjectName" label="学科名称" width="120" align="center" />
-        <el-table-column prop="username" label="创建者" width="90" align="center" />
-        <el-table-column prop="addDate" label="创建日期" width="180" align="center">
+        <el-table-column prop="subjectName" label="学科名称"  align="center" />
+        <el-table-column prop="username" label="创建者"  align="center" />
+        <el-table-column prop="addDate" label="创建日期"  align="center">
           <template #default="{row}">
             <span>
               {{ new Date(row.addDate).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="isFrontDisplay" label="前台是否显示" width="130" align="center" />
-        <el-table-column prop="twoLevelDirectory" label="二级目录" width="130" align="center" />
-        <el-table-column prop="tags" label="标签" width="130" align="center" />
-        <el-table-column prop="totals" label="题目数量" width="130" align="center" />
-        <el-table-column label="操作" align="center">
+        <el-table-column prop="isFrontDisplay" label="前台是否显示"  align="center" />
+        <el-table-column prop="twoLevelDirectory" label="二级目录"  align="center" />
+        <el-table-column prop="tags" label="标签"  align="center" />
+        <el-table-column prop="totals" label="题目数量"  align="center" />
+        <el-table-column label="操作" align="center" width="300px">
           <template #default="{row}">
-            <el-row type="flex">
+            <el-row type="flex" justify="center">
               <el-button type="text" @click="$router.push('directorys')">学科分类</el-button>
               <el-button type="text" @click="$router.push('tags')">学科标签</el-button>
               <el-button type="text" @click="edit(row.id)">修改</el-button>

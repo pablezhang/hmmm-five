@@ -20,3 +20,9 @@ export const editTagsListAPI = (data) => {
   return request({ url: `/tags/${data.id}`, method: 'put', data })
 }
 
+export const updateTagStatusAPI = (id, state) => {
+  return request({
+    url: `/tags/${id}/${state}`,
+    method: 'post'
+  })
+}

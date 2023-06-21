@@ -141,7 +141,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        const res = await delRandomAPI({ id })
+        await delRandomAPI({ id })
         this.$message('删除成功')
       })
     },

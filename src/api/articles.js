@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 export const getArticlesAPI = (params) => {
-  return request({ url: ' /articles', params })
+  return request({ url: '/articles', params })
 }
 
 export const addArticlesAPI = (data) => {
-  return request({ url: ' /articles', method: 'post', data })
+  return request({ url: '/articles', method: 'post', data })
 }
 
 export const delArticlesAPI = (id) => {

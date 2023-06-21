@@ -9,7 +9,7 @@ export const getSubjectListAPI = (params) => {
 // 学科添加
 export const addSubjectsAPI = (data) => {
   return request({
-    url: ' /subjects',
+    url: '/subjects',
     method: 'POST',
     data
   })
@@ -23,7 +23,7 @@ export const getSubjectsDetailAPI = (id) => {
 // 学科修改
 export const editSubjectsAPI = (data) => {
   return request({
-    url: ` /subjects/${data.id}`,
+    url: `/subjects/${data.id}`,
     method: 'PUT',
     data
   })

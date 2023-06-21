@@ -30,14 +30,14 @@ export const addChoiceAPI = ({ id, choiceState }) => {
 
 export const getSubjectsAPI = (params) => {
   return request({
-    url: ' /subjects/simple',
+    url: '/subjects/simple',
     params
   })
 }
 
 export const getCreatorAPI = (params) => {
   return request({
-    url: ' /users/simple',
+    url: '/users/simple',
     params
   })
 }

@@ -146,20 +146,20 @@
         :data="tableList"
         :header-cell-style="{ background: '#fafafa' }"
       >
-        <el-table-column prop="number" label="试题编号" width="120px" />
-        <el-table-column prop="subject" label="学科" width="105px" />
-        <el-table-column prop="catalog" label="目录" width="100px" />
-        <el-table-column prop="questionType" label="题型" width="100px">
+        <el-table-column prop="number" label="试题编号" width="200px" />
+        <el-table-column prop="subject" label="学科"  />
+        <el-table-column prop="catalog" label="目录"  />
+        <el-table-column prop="questionType" label="题型" >
           <template #default="{ row }">
             {{ ["单选", "多选", "简答"][row.questionType - 1] }}
           </template>
         </el-table-column>
-        <el-table-column prop="question" label="题干" width="280px">
+        <el-table-column prop="question" label="题干" >
           <template #default="{ row }">
             <div v-html="row.question" />
           </template>
         </el-table-column>
-        <el-table-column prop="addDate" label="录入时间" width="180px">
+        <el-table-column prop="addDate" label="录入时间">
           <template #default="{ row }">
             {{
               new Date(row.addDate)
@@ -168,46 +168,48 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column prop="difficulty" label="难度" width="100px">
+        <el-table-column prop="difficulty" label="难度">
           <template #default="{ row }">
             {{ ["简单", "一般", "困难"][row.difficulty - 1] }}
           </template>
         </el-table-column>
-        <el-table-column prop="creator" label="录入人" width="100px" />
-        <el-table-column label="操作">
+        <el-table-column prop="creator" label="录入人" />
+        <el-table-column label="操作" width="200px">
           <template #default="{ row }">
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-view"
-              circle
-              plain
-              @click="onView(row)"
-            />
-            <el-button
-              size="mini"
-              type="success"
-              icon="el-icon-edit"
-              circle
-              plain
-              @click="$router.push(`/questions/new/${row.id}`)"
-            />
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              circle
-              plain
-              @click="onDelete(row)"
-            />
-            <el-button
-              size="mini"
-              type="warning"
-              icon="el-icon-check"
-              circle
-              plain
-              @click="onAddChoice(row)"
-            />
+            <el-row type="flex">
+              <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-view"
+                circle
+                plain
+                @click="onView(row)"
+              />
+              <el-button
+                size="mini"
+                type="success"
+                icon="el-icon-edit"
+                circle
+                plain
+                @click="$router.push(`/questions/new/${row.id}`)"
+              />
+              <el-button
+                size="mini"
+                type="danger"
+                icon="el-icon-delete"
+                circle
+                plain
+                @click="onDelete(row)"
+              />
+              <el-button
+                size="mini"
+                type="warning"
+                icon="el-icon-check"
+                circle
+                plain
+                @click="onAddChoice(row)"
+              />
+            </el-row>
           </template>
         </el-table-column>
       </el-table>

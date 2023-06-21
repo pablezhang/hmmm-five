@@ -62,8 +62,7 @@
 </template>
 
 <script>
-import { updateStatusAPI } from '@/api/directorys'
-import { delTagsAPI, detailTagsListAPI, getTagsListAPI } from '@/api/tags'
+import { delTagsAPI, detailTagsListAPI, getTagsListAPI, updateTagStatusAPI } from '@/api/tags'
 import TagDialog from './components/tag-dialog.vue'
 export default {
   components: { TagDialog },
@@ -126,7 +125,7 @@ export default {
     },
     // 更新状态
     async updateStatus(row) {
-      await updateStatusAPI(row.id, row.state === 1 ? 0 : 1)
+      await updateTagStatusAPI(row.id, row.state === 1 ? 0 : 1)
       this.$message.success('状态已更换')
       this.renderTable(this.reqParameter)
     },

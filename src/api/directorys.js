@@ -51,7 +51,7 @@ export const updateStatusAPI = (id, state) => {
 // 删除目录
 export const delCatalogAPI = (id) => {
   return request({
-    url: ` /directorys/${id}`,
+    url: `/directorys/${id}`,
     method: 'delete'
   })
 }

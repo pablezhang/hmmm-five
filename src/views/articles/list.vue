@@ -26,25 +26,25 @@
         <el-table-column align="center" label="序号" width="80px">
           <template #default="{ $index }"> {{ $index + 1 }} </template>
         </el-table-column>
-        <el-table-column prop="title" label="文章标题" width="400px">
+        <el-table-column prop="title" label="文章标题">
           <template #default="{ row }">
             <span v-if="row.videoURL">{{ row.title }}<i class="el-icon-film" @click="onVideo(row)" /> </span>
             <span v-else>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="visits" label="阅读数" width="80px" />
-        <el-table-column prop="username" label="录入人" width="100px" />
+        <el-table-column prop="visits" label="阅读数" />
+        <el-table-column prop="username" label="录入人" />
         <el-table-column prop="createTime" label="录入时间">
           <template #default="{row}">
             {{ new Date(row.createTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
           </template>
         </el-table-column>
-        <el-table-column prop="state" label="状态" width="100px">
+        <el-table-column prop="state" label="状态" >
           <template #default="{ row }">
             {{ row.state ===1?'已启用':'已禁用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="200px">
           <template #default="{row}">
             <el-button type="text" @click="onPreview(row.id)">预览</el-button>
             <el-button v-if="row.state===1" type="text" @click="onClose(row.id,0)">禁用</el-button>

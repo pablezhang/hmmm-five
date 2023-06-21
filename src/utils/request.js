@@ -5,6 +5,7 @@ import router from '@/router'
 import store from '@/store'
 
 const request = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 10000
 })
 
