@@ -159,6 +159,7 @@ export default {
       if (!newValue) {
         this.$refs.form.resetFields()
         this.formData.id = ''
+        this.formData.videoURL = ''
       }
     }
   },
