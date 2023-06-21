@@ -159,6 +159,7 @@ export default {
       if (!newValue) {
         this.$refs.form.resetFields()
         this.formData.id = ''
+        this.formData.videoURL = ''
       }
     }
   },
@@ -235,7 +236,6 @@ export default {
       this.getArticles()
     },
     onVideo(row) {
-      console.log(row)
       this.$alert(` <video src="${row.videoURL}"></video>`, '视频', {
         dangerouslyUseHTMLString: true
       }).catch(() => {})
