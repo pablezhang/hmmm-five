@@ -60,7 +60,7 @@
           </el-form-item>
           <el-form-item v-show="questionData.questionType!=='3'" label="选项:" prop="options">
             <div v-for="(item, index) in questionDataList" :key="index" class="option">
-              <el-radio v-show="questionData.questionType ==='1'" v-model="item.isRight" :label="1" @click.native="radioChange(item.num)">{{ item.code }}</el-radio>
+              <el-radio v-show="questionData.questionType ==='1'" v-model="item.isRight" :label="true" @click.native="radioChange(item.num)">{{ item.code }}</el-radio>
               <el-checkbox v-show="questionData.questionType!=='1'" v-model="item.isRight" style="margin-right:15px">{{ item.code }}</el-checkbox>
               <el-input v-model="item.title" style="width:240px" />
               <el-upload
@@ -152,10 +152,10 @@ export default {
       alphabet: ['E:', 'F:', 'G:', 'H:', 'I:', 'J:', 'K:', 'L:', 'M:', 'N:', 'O:', 'P:', 'Q:', 'R:', 'S:', 'T:', 'U:', 'V:', 'W:', 'X:', 'Y:', 'Z:'],
 
       questionDataList: [
-        { code: 'A:', title: '', img: null, num: 0, isRight: 0 },
-        { code: 'B:', title: '', img: null, num: 1, isRight: 0 },
-        { code: 'C:', title: '', img: null, num: 2, isRight: 0 },
-        { code: 'D:', title: '', img: null, num: 3, isRight: 0 }
+        { code: 'A:', title: '', img: null, num: 0, isRight: false },
+        { code: 'B:', title: '', img: null, num: 1, isRight: false },
+        { code: 'C:', title: '', img: null, num: 2, isRight: false },
+        { code: 'D:', title: '', img: null, num: 3, isRight: false }
       ],
       editorOption: {
         modules: {
@@ -253,8 +253,8 @@ export default {
         delete item.num
         return item
       })
-      this.$route.params.id ? await editQuestionAPI(this.questionData) : await addOptionAPI(this.questionData)
-      this.$route.params.id ? Message.success('试题修改成功') : Message.success('试题添加成功')
+      Number(this.$route.params.id) ? await editQuestionAPI(this.questionData) : await addOptionAPI(this.questionData)
+      Number(this.$route.params.id) ? Message.success('试题修改成功') : Message.success('试题添加成功')
       this.$router.push('/questions/list')
     },
     // COS上传
