@@ -39,18 +39,20 @@
             {{ new Date(row.createTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
           </template>
         </el-table-column>
-        <el-table-column prop="state" label="状态" >
+        <el-table-column prop="state" label="状态">
           <template #default="{ row }">
             {{ row.state ===1?'已启用':'已禁用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200px">
+        <el-table-column align="center" label="操作" width="200px">
           <template #default="{row}">
-            <el-button type="text" @click="onPreview(row.id)">预览</el-button>
-            <el-button v-if="row.state===1" type="text" @click="onClose(row.id,0)">禁用</el-button>
-            <el-button v-else type="text" @click="onOpen(row.id,1)">启用</el-button>
-            <el-button type="text" :disabled="row.state!==1?false:disabled" @click="onEdit(row.id)">修改</el-button>
-            <el-button type="text" :disabled="row.state!==1?false:disabled" @click="onDel(row.id)">删除</el-button>
+            <el-row type="flex">
+              <el-button type="text" @click="onPreview(row.id)">预览</el-button>
+              <el-button v-if="row.state===1" type="text" @click="onClose(row.id,0)">禁用</el-button>
+              <el-button v-else type="text" @click="onOpen(row.id,1)">启用</el-button>
+              <el-button type="text" :disabled="row.state!==1?false:disabled" @click="onEdit(row.id)">修改</el-button>
+              <el-button type="text" :disabled="row.state!==1?false:disabled" @click="onDel(row.id)">删除</el-button>
+            </el-row>
           </template>
         </el-table-column>
       </el-table>
