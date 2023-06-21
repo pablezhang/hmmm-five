@@ -1,4 +1,3 @@
-
 import Layout from '@/layout'
 
 const questionsRouter = {

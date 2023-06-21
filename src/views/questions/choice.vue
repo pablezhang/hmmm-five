@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-card class="box-card" style="margin: 20px">
@@ -116,12 +115,12 @@
           <el-row>
             <el-col :span="6">
               <el-form-item label="题目备注">
-                <el-input v-model="params.remarks" />
+                <el-input v-model="params.remarks" style="width:203px" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="企业简称">
-                <el-input v-model="params.shortName" />
+                <el-input v-model="params.shortName" style="width:203px" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
