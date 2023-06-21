@@ -25,7 +25,13 @@
         <el-table-column align="center" prop="subjectName" label="所属学科" />
         <el-table-column align="center" prop="directoryName" label="目录名称" />
         <el-table-column align="center" prop="username" label="创建者" />
-        <el-table-column align="center" prop="addDate" label="创建日期" />
+        <el-table-column align="center" prop="addDate" label="创建日期">
+          <template #default="{row}">
+            <span>
+              {{ new Date(row.addDate).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-') }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="totals" label="面试题数量" />
         <el-table-column align="center" prop="state" label="状态">
           <template #default="{row}">
