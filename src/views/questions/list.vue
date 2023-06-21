@@ -378,37 +378,30 @@ export default {
   methods: {
     async getProvince() {
       const res = await getProvinceAPI()
-      // console.log(res)
       this.provinceList = res.data.list
     },
     async getCity(value) {
       const res = await getCityAPI({ pname: value })
-      // console.log(res)
       this.cityList = res.data.list
     },
     async getQuestions() {
       const res = await gerQuestionsAPI(this.questionSearchData)
-      console.log(res)
       this.tableList = res.items
       this.total = res.counts
     },
     async getSubjects() {
       const res = await getSubjectsAPI(this.subjectName)
-      // console.log(res)
       this.subjectList = res
     },
     async getCreator() {
       const res = await getCreatorAPI(this.questionSearchData)
-      // console.log(res)
       this.creatorList = res
     },
     async onView(row) {
       this.visible = true
       const res = await gerQuestionsViewAPI(row.id)
-      console.log(res)
       this.viewData = res
       this.options = res.options
-      // console.log(this.options)
     },
     async onDelete(row) {
       this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {

@@ -74,7 +74,6 @@ export default {
     async edit(id) {
       this.id = id
       const res = await getSubjectsDetailAPI(id)
-      console.log(res)
       this.form.subjectName = res.subjectName
       this.form.isFrontDisplay = res.isFrontDisplay
     }

@@ -40,7 +40,6 @@ Mock.mock(/\/api\/users\?page=\d+&pagesize=\d+/, 'get',
 )
 
 Mock.mock(/\/api\/users/, 'delete', (option) => {
-  console.log(option)
   if (option.id) {
     return {
       success: true
@@ -53,6 +52,5 @@ Mock.mock(/\/api\/users/, 'delete', (option) => {
 })
 
 Mock.mock(/\/api\/users\/yy/, 'get', (option) => {
-  console.log(option)
   return []
 })

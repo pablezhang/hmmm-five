@@ -235,7 +235,6 @@ export default {
       this.getArticles()
     },
     onVideo(row) {
-      console.log(row)
       this.$alert(` <video src="${row.videoURL}"></video>`, '视频', {
         dangerouslyUseHTMLString: true
       }).catch(() => {})

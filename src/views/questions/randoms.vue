@@ -130,7 +130,6 @@ export default {
     },
 
     currentChange(page) {
-      console.log(page)
       this.pageList.page = page
       this.onLoad()
     },
@@ -142,7 +141,6 @@ export default {
       }).then(async() => {
         const res = await delRandomAPI({ id })
         this.$message('删除成功')
-        console.log(res)
       })
     },
     async search() {
@@ -151,7 +149,6 @@ export default {
     },
     edit() {
       this.dialogVisible = true
-      console.log(1)
     }
   }
 }
