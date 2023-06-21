@@ -48,6 +48,7 @@
           :page-size="reqParameter.pagesize"
           layout="prev, pager, next, sizes, jumper"
           :total="counts"
+          :current-page="reqParameter.page"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -97,6 +98,7 @@ export default {
     },
     // 搜索功能
     goSearch() {
+      this.reqParameter.page = 1
       this.renderTable(this.reqParameter)
       this.$message.success('搜索成功')
     },
