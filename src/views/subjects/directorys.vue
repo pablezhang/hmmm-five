@@ -17,7 +17,10 @@
             <el-button size="small" class="btn" type="primary" @click="goSearch">搜索</el-button>
           </el-row>
         </el-form>
-        <el-button class="btn" type="success" size="small" @click="visible=true"><i class="el-icon-edit" /> 新增目录</el-button>
+        <el-col :span="8" :push="5">
+          <span v-show="$route.query.id" style="color:#409eff;cursor:pointer;margin-right:10px; font-size: 15px" @click="$router.go(-1)"><i class="el-icon-back">返回学科</i></span>
+          <el-button class="btn" type="success" size="small" @click="visible=true"><i class="el-icon-edit" /> 新增目录</el-button>
+        </el-col>
       </el-row>
       <div class="total"><i class="el-icon-info" /> 数据一共 {{ counts }} 条</div>
       <el-table :data="tableList" class="table" :header-cell-style="{background:'#fafafa'}">
