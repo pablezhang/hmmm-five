@@ -631,9 +631,9 @@ export default {
   padding: 10px 0;
 }
 
-.dia-card {
-  width: 100%;
-}
+// .dia-card {
+//   // width: 100%;
+// }
 ::v-deep .el-dialog {
   border-radius: 10px;
 }
